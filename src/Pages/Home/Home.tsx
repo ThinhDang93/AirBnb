@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllRoom, getRoomByID } from "../../redux/reducers/RoomReducer";
 import RoomCart from "./ComponentHome/RoomCart";
 import type { RootState, DispatchType } from "../../redux/store";
-import { NavLink } from "react-router-dom";
 import type { HomeRoomType } from "../../assets/Models/Room";
 
 const Home = () => {
