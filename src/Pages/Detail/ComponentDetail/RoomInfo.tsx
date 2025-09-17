@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import type { DispatchType, RootState } from "../../../redux/store";
 import { getRoomDetailActionThunk } from "../../../redux/reducers/RoomReducer";
 
-type Props = {};
-
-const RoomInfo = (props: Props) => {
+const RoomInfo = () => {
   const params = useParams();
   const { id } = params;
   const dispatch: DispatchType = useDispatch();

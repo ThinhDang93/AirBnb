@@ -1,11 +1,8 @@
-import React from "react";
 import { HeaderComponent } from "../../Component/HeaderComponent";
 import { Outlet } from "react-router-dom";
 import FooterComponent from "../../Component/FooterComponent";
 
-type Props = {};
-
-const HomeTemplate = (props: Props) => {
+const HomeTemplate = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <HeaderComponent />

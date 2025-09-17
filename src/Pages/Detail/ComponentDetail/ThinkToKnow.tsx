@@ -1,4 +1,3 @@
-import React from "react";
 import { ShieldCheck, Ban, CalendarX2 } from "lucide-react";
 
 const ThingsToKnow = () => {

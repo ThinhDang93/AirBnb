@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 
-type Props = {};
-
-const Search = (props: Props) => {
+const Search = () => {
   // State lưu ô nào đang được chọn
   const [active, setActive] = useState<string>("location");
 

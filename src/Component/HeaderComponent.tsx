@@ -1,11 +1,8 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 import Search from "./Search";
 import Logo from "../assets/img/Logo.jpg";
 
-type Props = {};
-
-export const HeaderComponent = (props: Props) => {
+export const HeaderComponent = () => {
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">

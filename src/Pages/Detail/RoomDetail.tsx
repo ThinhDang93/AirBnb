@@ -1,11 +1,9 @@
-import React from "react";
 import RoomInfo from "./ComponentDetail/RoomInfo";
 import CommentViewer from "./ComponentDetail/CommentViewer";
 import ThingsToKnow from "./ComponentDetail/ThinkToKnow";
 
-type Props = {};
 
-const RoomDetail = (props: Props) => {
+const RoomDetail = () => {
   return (
     <div className="mx-auto max-w-6xl px-4 space-y-12 py-8">
       <RoomInfo />

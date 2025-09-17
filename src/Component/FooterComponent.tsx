@@ -1,10 +1,7 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../assets/img/Logo.jpg";
 
-type Props = {};
-
-const FooterComponent = (props: Props) => {
+const FooterComponent = () => {
   return (
     <footer className="bg-white shadow-sm dark:bg-gray-900 mt-auto">
       <div className="w-full  p-4 md:py-8">
