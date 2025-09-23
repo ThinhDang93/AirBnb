@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import type { DispatchType, RootState } from "../../../redux/store";
 import { getRoomDetailActionThunk } from "../../../redux/reducers/RoomReducer";
+import RoomBooking from "./RoomBooking";
 
 const RoomInfo = () => {
   const params = useParams();
@@ -85,7 +86,7 @@ const RoomInfo = () => {
         </div>
 
         {/* Cột phải: Booking Box */}
-        <div className="bg-white shadow-xl rounded-2xl p-6 sticky top-24 h-fit">
+        {/* <div className="bg-white shadow-xl rounded-2xl p-6 sticky top-24 h-fit">
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-bold text-gray-900">
               {roomDetail?.giaTien.toLocaleString("vi-VN")}₫
@@ -96,14 +97,11 @@ const RoomInfo = () => {
           <button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium text-lg shadow">
             Đặt phòng
           </button>
-        </div>
+        </div> */}
+        <RoomBooking />
       </div>
     </div>
   );
 };
 
 export default RoomInfo;
-
-/**
- * Tách component RoomDetail -> Thêm component CommentViewer
- */

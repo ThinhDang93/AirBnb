@@ -11,6 +11,8 @@ import HomeTemplate from "./Pages/Template/HomeTemplate";
 import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
 import RoomDetail from "./Pages/Detail/RoomDetail";
+import Page404 from "./Pages/Orther/Page404";
+import ComingSoon from "./Pages/Orther/ComingSoon";
 export const routeLink: any = createBrowserHistory();
 
 export function App() {
@@ -23,9 +25,12 @@ export function App() {
               <Route path="/detail">
                 <Route path=":id" element={<RoomDetail />} />
               </Route>
+              <Route path="/vehicle" element={<ComingSoon />} />
+              <Route path="/service" element={<ComingSoon />} />
               <Route index element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="*" element={<Page404 />} />
             </Route>
           </Routes>
         </HistoryRouter>

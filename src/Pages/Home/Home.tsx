@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllRoom, getRoomByID } from "../../redux/reducers/RoomReducer";
 import RoomCart from "./ComponentHome/RoomCart";
@@ -7,63 +7,83 @@ import type { HomeRoomType } from "../../assets/Models/Room";
 
 const Home = () => {
   const dispatch: DispatchType = useDispatch();
+  const [isSearched, setIsSearch] = useState(false);
 
-  // Lấy dữ liệu từ Redux store
-  const arrRoombyid = useSelector(
-    (state: RootState) => state.RoomReducer.arrRoombyid
+  const { arrAllroom, arrRoombyid } = useSelector(
+    (state: RootState) => state.RoomReducer
+  );
+  const { arrFilteredLocation, arrAllLocation } = useSelector(
+    (state: RootState) => state.LocationReducer
   );
 
-  const { arrAllroom } = useSelector((state: RootState) => state.RoomReducer);
-
-  const getAllRoomAPI = () => {
-    dispatch(getAllRoom());
-  };
-
-  // Gọi API cho 3 mã vùng
+  // Khi arrFilteredLocation thay đổi => gọi API phù hợp
   useEffect(() => {
-    [1, 2, 3].forEach((id) => dispatch(getRoomByID(id))), getAllRoomAPI();
-  }, [dispatch]);
-
-  const regions = [
-    { id: 1, name: "Vùng 1" },
-    { id: 2, name: "Vùng 2" },
-    { id: 3, name: "Vùng 3" },
-  ];
+    if (arrFilteredLocation.length === arrAllLocation.length) {
+      // ⬅ đây là case: user search rỗng → show all
+      dispatch(getAllRoom());
+    } else if (arrFilteredLocation.length > 0) {
+      // ⬅ có filter thật sự
+      setIsSearch(true);
+      arrFilteredLocation.forEach((loc) => {
+        if (!arrRoombyid[loc.id]) {
+          dispatch(getRoomByID(loc.id));
+        }
+      });
+    }
+    // nếu length === 0 và !== arrAllLocation.length → notfound
+  }, [arrFilteredLocation, arrAllLocation.length, dispatch, arrRoombyid]);
 
   return (
-    <>
-      <div className="container grid grid-cols-4 gap-4 py-10">
-        {arrAllroom.map((item: HomeRoomType, index: number) => (
-          <RoomCart key={index} room={item} />
-        ))}
-      </div>
-      <div className="container mx-auto px-4 py-10 space-y-12">
-        {regions.map((region) => (
-          <section key={region.id}>
-            {/* Tiêu đề vùng */}
-            <h3 className="text-2xl font-bold mb-6 text-gray-800">
-              {region.name}
-            </h3>
+    <div className="container py-10 space-y-10">
+      {/* Trường hợp không tìm thấy */}
+      {arrFilteredLocation.length === 0 &&
+      arrAllLocation.length > 0 &&
+      isSearched === true ? ( // allLocation > 0 để tránh khi mới load
+        <p className="text-center text-gray-500 italic">
+          ❌ Không tìm thấy thành phố phù hợp
+        </p>
+      ) : arrFilteredLocation.length === arrAllLocation.length ||
+        isSearched === false ? (
+        // Trường hợp search rỗng → getAll
+        <div className="grid grid-cols-4 gap-4">
+          {arrAllroom.map((room: HomeRoomType) => (
+            <RoomCart key={room.id} room={room} />
+          ))}
+        </div>
+      ) : (
+        // Có filter → render theo từng vị trí
+        arrFilteredLocation.map((loc) => (
+          <div key={loc.id}>
+            <div className="mb-4 flex items-center gap-4">
+              <img
+                src={loc.hinhAnh}
+                alt={loc.tenViTri}
+                className="w-16 h-16 rounded-lg object-cover"
+              />
+              <h2 className="text-xl font-bold">{loc.tenViTri}</h2>
+            </div>
 
-            {/* Grid danh sách phòng */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {arrRoombyid[region.id]?.map((room) => (
-                <RoomCart key={room.id} room={room} />
-              ))}
-
-              {/* Nếu chưa có dữ liệu */}
-              {(!arrRoombyid[region.id] ||
-                arrRoombyid[region.id].length === 0) && (
-                <p className="text-gray-500 col-span-full text-center">
-                  Không có phòng nào ở {region.name}.
+            <div className="grid grid-cols-4 gap-4">
+              {arrRoombyid[loc.id]?.length > 0 ? (
+                arrRoombyid[loc.id].map((room: HomeRoomType) => (
+                  <RoomCart key={room.id} room={room} />
+                ))
+              ) : (
+                <p className="col-span-4 text-gray-500 italic">
+                  Không có phòng nào cho vị trí này.
                 </p>
               )}
             </div>
-          </section>
-        ))}
-      </div>
-    </>
+          </div>
+        ))
+      )}
+    </div>
   );
 };
 
 export default Home;
+
+/**
+ *
+ * - Phần thêm: so sánh giữa các room
+ */

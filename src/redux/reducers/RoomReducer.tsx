@@ -1,5 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { HomeRoomType, RoomDetailType } from "../../assets/Models/Room";
+import type {
+  BookingRoomType,
+  HomeRoomType,
+  RoomDetailType,
+} from "../../assets/Models/Room";
 import type { DispatchType } from "../store";
 import { httpClient } from "../../Utils/interceptor";
 
@@ -7,12 +11,14 @@ export interface RoomStateType {
   arrAllroom: HomeRoomType[];
   arrRoombyid: Record<number, HomeRoomType[]>;
   roomDetail: RoomDetailType | null;
+  roomBookingbyUser: BookingRoomType | null;
 }
 
 const initialState: RoomStateType = {
   arrAllroom: [],
   arrRoombyid: {},
   roomDetail: null,
+  roomBookingbyUser: null,
 };
 
 const RoomReducer = createSlice({
@@ -42,11 +48,22 @@ const RoomReducer = createSlice({
     ) => {
       state.roomDetail = action.payload;
     },
+
+    setRoomBookingbyUser: (
+      state: RoomStateType,
+      action: PayloadAction<BookingRoomType>
+    ) => {
+      state.roomBookingbyUser = action.payload;
+    },
   },
 });
 
-export const { setArrRoomById, setArrAllRoom, setRoomDetail } =
-  RoomReducer.actions;
+export const {
+  setArrRoomById,
+  setArrAllRoom,
+  setRoomDetail,
+  setRoomBookingbyUser,
+} = RoomReducer.actions;
 export default RoomReducer.reducer;
 
 // Thunk gọi API
@@ -78,6 +95,17 @@ export const getRoomDetailActionThunk = (maPhong: string) => {
     const res = await httpClient.get(`/api/phong-thue/${maPhong}`);
 
     const action = setRoomDetail(res.data.content);
+    dispatch(action);
+  };
+};
+
+export const postInfoBookingRoomActionThunk = (
+  infoBooking: BookingRoomType
+) => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.post("/api/dat-phong", infoBooking);
+
+    const action = setRoomBookingbyUser(res.data.content);
     dispatch(action);
   };
 };

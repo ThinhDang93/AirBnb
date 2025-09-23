@@ -6,7 +6,7 @@ const HomeTemplate = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <HeaderComponent />
-      <div className="container mx-auto w-full">
+      <div className="container mx-auto w-full pt-30">
         <Outlet />
       </div>
       <FooterComponent />

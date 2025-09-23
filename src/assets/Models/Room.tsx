@@ -26,3 +26,11 @@ export interface RoomDetailType {
   maViTri: number;
   hinhAnh: string;
 }
+
+export interface BookingRoomType {
+  maPhong: number;
+  ngayDen: string;
+  ngayDi: string;
+  soLuongKhach: number;
+  maNguoiDung: number;
+}

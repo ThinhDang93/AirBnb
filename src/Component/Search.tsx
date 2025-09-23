@@ -1,68 +1,73 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getAllLocaActionThunk,
+  setArrFilterLoca,
+} from "../redux/reducers/LocationReducer";
+import type { DispatchType, RootState } from "../redux/store";
 
 const Search = () => {
-  // State lưu ô nào đang được chọn
-  const [active, setActive] = useState<string>("location");
+  const [keyword, setKeyword] = useState("");
+  const dispatch: DispatchType = useDispatch();
 
-  // Danh sách các ô
-  const items = [
-    { key: "location", label: "Location", placeholder: "Enter location" },
-    { key: "check-in", label: "Check-in", placeholder: "Add date" },
-    { key: "check-out", label: "Check-out", placeholder: "Add date" },
-    { key: "guests", label: "Who", placeholder: "Add guests" },
-  ];
+  const { arrAllLocation } = useSelector(
+    (state: RootState) => state.LocationReducer
+  );
+
+  // ✅ Lấy all location khi load lần đầu
+  useEffect(() => {
+    dispatch(getAllLocaActionThunk());
+  }, [dispatch]);
+
+  // ✅ Hàm search
+  const handleSearch = async () => {
+    const trimmed = keyword.trim().toLowerCase();
+
+    if (!trimmed) {
+      // Nếu rỗng → reset về toàn bộ
+      dispatch(setArrFilterLoca(arrAllLocation));
+      return;
+    }
+
+    // Lọc trực tiếp từ arrAllLocation
+    const filtered = arrAllLocation.filter((loc) =>
+      loc.tinhThanh.toLowerCase().includes(trimmed)
+    );
+
+    if (filtered.length > 0) {
+      dispatch(setArrFilterLoca(filtered));
+    } else {
+      // Không có kết quả → set rỗng nhưng kèm cờ báo "not found"
+      dispatch(setArrFilterLoca([]));
+    }
+  };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      {/* Container chính */}
-      <div
-        className="flex items-center rounded-full border border-gray-300 
-        shadow-sm bg-white overflow-hidden"
-      >
-        {/* Các ô */}
-        {items.map((item, index) => (
-          <React.Fragment key={item.key}>
-            <a
-              onClick={() => setActive(item.key)}
-              className={`flex flex-col px-6 py-3 cursor-pointer transition-colors 
-                ${
-                  active === item.key
-                    ? "bg-gray-100 text-gray-900"
-                    : "hover:bg-gray-50 text-gray-700"
-                }`}
-            >
-              <span className="text-xs font-semibold">{item.label}</span>
-              <span className="text-sm text-gray-400">{item.placeholder}</span>
-            </a>
+    <div className="w-full max-w-xl mx-auto p-2 ">
+      <div className="flex items-center bg-white border border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all duration-200 ">
+        {/* Input */}
+        <input
+          type="text"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
+          placeholder="Bạn muốn đi đâu?"
+          className="flex-1 rounded-full px-5 py-3 outline-none  text-black placeholder-gray-700   hover:bg-gray-200"
+        />
 
-            {/* Gạch dọc ngăn cách, không thêm ở phần tử cuối */}
-            {index < items.length - 1 && (
-              <div className="h-10 w-px bg-gray-300" />
-            )}
-          </React.Fragment>
-        ))}
+        {/* Divider */}
+        <div className="h-6 w-px bg-gray-300 mx-2" />
 
-        {/* Nút Search */}
+        {/* Button */}
         <button
-          type="button"
-          className="ml-3 mr-3 flex items-center justify-center w-10 h-10 
-          bg-blue-700 hover:bg-blue-800 rounded-full text-white transition-colors"
+          onClick={handleSearch}
+          className="flex items-center justify-center w-10 h-10 bg-pink-600 hover:bg-pink-700 rounded-full text-white transition-colors mr-2"
         >
-          <svg
-            className="w-4 h-4"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 20 20"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-            />
-          </svg>
+          🔍
         </button>
       </div>
     </div>
