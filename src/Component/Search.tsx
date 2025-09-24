@@ -5,6 +5,8 @@ import {
   setArrFilterLoca,
 } from "../redux/reducers/LocationReducer";
 import type { DispatchType, RootState } from "../redux/store";
+import { getAllRoom } from "../redux/reducers/RoomReducer";
+import { setTrue } from "../redux/reducers/SearchReducer";
 
 const Search = () => {
   const [keyword, setKeyword] = useState("");
@@ -22,11 +24,17 @@ const Search = () => {
   // ✅ Hàm search
   const handleSearch = async () => {
     const trimmed = keyword.trim().toLowerCase();
+    // Nếu rỗng → getAllRoom
 
     if (!trimmed) {
-      // Nếu rỗng → reset về toàn bộ
+      dispatch(getAllRoom());
+    }
+    if (keyword !== "") {
+      dispatch(setTrue());
+    }
+
+    if (arrAllLocation.length === 0) {
       dispatch(setArrFilterLoca(arrAllLocation));
-      return;
     }
 
     // Lọc trực tiếp từ arrAllLocation
@@ -40,6 +48,7 @@ const Search = () => {
       // Không có kết quả → set rỗng nhưng kèm cờ báo "not found"
       dispatch(setArrFilterLoca([]));
     }
+    // console.log(trimmed, arrAllLocation, filtered);
   };
 
   return (

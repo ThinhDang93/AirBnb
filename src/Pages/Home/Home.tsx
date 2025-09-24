@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllRoom, getRoomByID } from "../../redux/reducers/RoomReducer";
 import RoomCart from "./ComponentHome/RoomCart";
@@ -7,7 +7,7 @@ import type { HomeRoomType } from "../../assets/Models/Room";
 
 const Home = () => {
   const dispatch: DispatchType = useDispatch();
-  const [isSearched, setIsSearch] = useState(false);
+  const { isSearch } = useSelector((state: any) => state.SearchReducer);
 
   const { arrAllroom, arrRoombyid } = useSelector(
     (state: RootState) => state.RoomReducer
@@ -15,7 +15,6 @@ const Home = () => {
   const { arrFilteredLocation, arrAllLocation } = useSelector(
     (state: RootState) => state.LocationReducer
   );
-
   // Khi arrFilteredLocation thay đổi => gọi API phù hợp
   useEffect(() => {
     if (arrFilteredLocation.length === arrAllLocation.length) {
@@ -23,7 +22,6 @@ const Home = () => {
       dispatch(getAllRoom());
     } else if (arrFilteredLocation.length > 0) {
       // ⬅ có filter thật sự
-      setIsSearch(true);
       arrFilteredLocation.forEach((loc) => {
         if (!arrRoombyid[loc.id]) {
           dispatch(getRoomByID(loc.id));
@@ -38,12 +36,12 @@ const Home = () => {
       {/* Trường hợp không tìm thấy */}
       {arrFilteredLocation.length === 0 &&
       arrAllLocation.length > 0 &&
-      isSearched === true ? ( // allLocation > 0 để tránh khi mới load
+      isSearch === true ? ( // allLocation > 0 để tránh khi mới load
         <p className="text-center text-gray-500 italic">
           ❌ Không tìm thấy thành phố phù hợp
         </p>
       ) : arrFilteredLocation.length === arrAllLocation.length ||
-        isSearched === false ? (
+        isSearch === false ? (
         // Trường hợp search rỗng → getAll
         <div className="grid grid-cols-4 gap-4">
           {arrAllroom.map((room: HomeRoomType) => (
@@ -84,6 +82,5 @@ const Home = () => {
 export default Home;
 
 /**
- *
  * - Phần thêm: so sánh giữa các room
  */

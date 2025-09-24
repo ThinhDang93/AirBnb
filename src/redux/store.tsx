@@ -3,9 +3,16 @@ import RoomReducer from "./reducers/RoomReducer";
 import CommentReducer from "./reducers/CommentReducer";
 import UserReducer from "./reducers/UserReducer";
 import LocationReducer from "./reducers/LocationReducer";
+import SearchReducer from "./reducers/SearchReducer";
 
 export const store = configureStore({
-  reducer: { RoomReducer, CommentReducer, UserReducer, LocationReducer },
+  reducer: {
+    RoomReducer,
+    CommentReducer,
+    UserReducer,
+    LocationReducer,
+    SearchReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
