@@ -66,7 +66,7 @@ const UserManageMent = () => {
               {/* Actions */}
               <td className="px-4 py-2 flex gap-2 pt-4">
                 <NavLink
-                  to={`user/${user.id}`}
+                  to={`/admin/user/${user.id}`}
                   className="flex items-center gap-1 px-4 py-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-xs"
                 >
                   <FaEdit /> Update
