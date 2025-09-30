@@ -72,11 +72,11 @@ const UserDetail = () => {
               {userDetailbyID?.role}
             </p>
           </div>
-          <button className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition shadow">
-            <NavLink to={`/user/edit/${userDetailbyID?.id}`}>
+          <NavLink to={`/user/edit/${userDetailbyID?.id}`}>
+            <button className="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition shadow">
               ✏️ Chỉnh sửa thông tin
-            </NavLink>
-          </button>
+            </button>
+          </NavLink>
         </div>
       </div>
 
@@ -120,19 +120,21 @@ const UserDetail = () => {
                       />
                     </td>
                     <td className="px-6 py-3 border-b">{room?.tenPhong}</td>
-                    <td className="px-6 py-3 border-b">{b.ngayDi}</td>
                     <td className="px-6 py-3 border-b">{b.ngayDen}</td>
+
+                    <td className="px-6 py-3 border-b">{b.ngayDi}</td>
                     <td className="px-6 py-3 border-b">{b.soLuongKhach}</td>
                     <td className="px-6 py-3 border-b text-center">
                       <div className="flex items-center justify-center gap-4">
                         {/* Nút Sửa */}
-                        <button
-                          className="flex items-center gap-2 px-5 py-2 bg-yellow-100 text-yellow-700 
+                        <NavLink to={`/user/editbookingroom/${b.id}`}>
+                          <button
+                            className="flex items-center gap-2 px-5 py-2 bg-yellow-100 text-yellow-700 
                  rounded-full hover:bg-yellow-200 transition font-medium border border-yellow-300 shadow-sm"
-                        >
-                          ✏️ <span>Sửa</span>
-                        </button>
-
+                          >
+                            ✏️ <span>Sửa</span>
+                          </button>
+                        </NavLink>
                         {/* Nút Xoá */}
                         <button
                           onClick={() => DeleteRoomBookingbyMaPhong(b.id)}

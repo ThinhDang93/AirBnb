@@ -1,4 +1,4 @@
-import type { RoomDetailType } from "../assets/Models/Room";
+import type { BookingRoomType, RoomDetailType } from "../assets/Models/Room";
 import { httpClient } from "../Utils/interceptor";
 
 export const DeleteRoomAPIbyID = async (id: any) => {
@@ -14,5 +14,9 @@ export const AddRoomAPIbyID = async (values: RoomDetailType) => {
 };
 
 export const DeleteRoomBookingbyMaPhong = async (maPhong: any) => {
-  return await httpClient.delete(`/api/dat-phong/${maPhong}`, maPhong);
+  return await httpClient.delete(`/api/dat-phong/${maPhong}`);
+};
+
+export const UpdateRoomBooking = async (data: BookingRoomType) => {
+  return await httpClient.put(`/api/dat-phong/${data.id}`, data);
 };
