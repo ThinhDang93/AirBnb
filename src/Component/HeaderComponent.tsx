@@ -90,6 +90,11 @@ export const HeaderComponent = () => {
                   <NavLink
                     to={`/user/${userInfoLogin.id}`}
                     className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
+                    onClick={() => {
+                      if (open === true) {
+                        setOpen(false);
+                      }
+                    }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -105,10 +110,11 @@ export const HeaderComponent = () => {
                   </NavLink>
 
                   <hr className="border-t" />
-
                   {/* Logout */}
                   <button
-                    onClick={() => dispatch(removeUserLogin())}
+                    onClick={() => {
+                      dispatch(removeUserLogin());
+                    }}
                     className="flex items-center gap-2 w-full px-4 py-2 text-red-600 hover:bg-red-50 transition"
                   >
                     <svg

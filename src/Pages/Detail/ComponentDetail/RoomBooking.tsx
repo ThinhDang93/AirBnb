@@ -47,12 +47,10 @@ const RoomBooking = () => {
         maNguoiDung: userInfoLogin?.id ?? 0, // lấy id từ store Redux
       };
 
-      console.log("📦 Payload gửi lên BE", payload);
       try {
         dispatch(postInfoBookingRoomActionThunk(payload));
         navigate("/"); //
         alert("Đặt phòng thành công!");
-        console.log(payload);
       } catch (err: any) {
         alert(err.response?.data?.message || "Đặt phòng thất bại");
       }

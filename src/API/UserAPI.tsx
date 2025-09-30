@@ -13,3 +13,4 @@ export const UpdateUserAPI = async (data: UserInfo, id: any) => {
 export const postDataRegisterAPI = async (data: UserInfo) => {
   return await httpClient.post("/api/auth/signup", data);
 };
+

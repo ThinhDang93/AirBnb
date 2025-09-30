@@ -18,10 +18,9 @@ import UserDetail from "./Pages/User/UserDetail";
 
 import AdminTemplate from "./Pages/Template/AdminTemplate";
 import Admin from "./Pages/Admin/Admin";
-import UserManageMent from "./Pages/Admin/ComponentAdmin/UserManageMent";
 import RoomManageMent from "./Pages/Admin/ComponentAdmin/RoomManageMent";
-import UserDetail from "./Pages/Admin/ComponentAdmin/UserDetail";
 import FormRoomManageMent from "./Pages/Admin/ComponentAdmin/FormRoomManageMent";
+import UserInfoUpdate from "./Pages/User/ComponentUser/UserInfoUpdate";
 
 export const routeLink: any = createBrowserHistory();
 
@@ -43,9 +42,8 @@ export function App() {
 
               <Route path="user">
                 <Route path=":id" element={<UserDetail />} />
+                <Route path="edit/:id" element={<UserInfoUpdate />} />
               </Route>
-
-
               <Route path="*" element={<Page404 />} />
             </Route>
             <Route path="/admin" element={<AdminTemplate />}>

@@ -16,7 +16,6 @@ export interface RoomStateType {
   roomBookingDetail: BookingRoomType[];
 
   roomDetailManageByID: RoomDetailType | null;
-
 }
 
 const initialState: RoomStateType = {
@@ -28,7 +27,6 @@ const initialState: RoomStateType = {
   roomBookingDetail: [],
 
   roomDetailManageByID: null,
-
 };
 
 const RoomReducer = createSlice({
@@ -66,19 +64,17 @@ const RoomReducer = createSlice({
       state.roomBookingbyUser = action.payload;
     },
 
-
     setBookingRoomDetail: (
       state: RoomStateType,
       action: PayloadAction<BookingRoomType[]>
     ) => {
       state.roomBookingDetail = action.payload;
-
+    },
     setRoomDetailManageMent: (
       state: RoomStateType,
       action: PayloadAction<RoomDetailType>
     ) => {
       state.roomDetailManageByID = action.payload;
-
     },
   },
 });
@@ -92,7 +88,6 @@ export const {
   setBookingRoomDetail,
 
   setRoomDetailManageMent,
-
 } = RoomReducer.actions;
 export default RoomReducer.reducer;
 
@@ -140,7 +135,6 @@ export const postInfoBookingRoomActionThunk = (
   };
 };
 
-
 export const getBookingRoomDetailActionThunk = (id: any) => {
   return async (dispatch: DispatchType) => {
     const res = await httpClient.get(
@@ -149,7 +143,9 @@ export const getBookingRoomDetailActionThunk = (id: any) => {
     );
 
     const action = setBookingRoomDetail(res.data.content);
-
+    dispatch(action);
+  };
+};
 
 export const getRoomDetailManageMentActionThunk = (id: string) => {
   return async (dispatch: DispatchType) => {

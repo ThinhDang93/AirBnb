@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../assets/img/Logo.png";
+import { removeUserLogin } from "../redux/reducers/UserReducer";
+import type { DispatchType } from "../redux/store";
+import { useDispatch } from "react-redux";
 
 const SlideBar = () => {
   const [openMenu, setOpenMenu] = useState(null);
@@ -9,6 +12,11 @@ const SlideBar = () => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
 
+  const dispatch: DispatchType = useDispatch();
+
+  const handleLogin = () => {
+    dispatch(removeUserLogin());
+  };
   return (
     <div>
       <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -246,6 +254,7 @@ const SlideBar = () => {
               <NavLink
                 to="/login"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                onClick={handleLogin}
               >
                 <svg
                   className="shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"

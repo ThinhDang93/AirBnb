@@ -12,3 +12,7 @@ export const UpdateRoomAPIbyID = async (id: any, values: RoomDetailType) => {
 export const AddRoomAPIbyID = async (values: RoomDetailType) => {
   return await httpClient.post("/api/phong-thue", values);
 };
+
+export const DeleteRoomBookingbyMaPhong = async (maPhong: any) => {
+  return await httpClient.delete(`/api/dat-phong/${maPhong}`, maPhong);
+};

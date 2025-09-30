@@ -6,13 +6,15 @@ import { ACCESS_TOKEN, httpClient } from "../../Utils/interceptor";
 export interface UserStateType {
   arrAllUser: UserInfo[];
   userInfoLogin: UserInfo | null;
-  userDetailbyID: UserInfo | null ;
+  userDetailbyID: UserInfo | null;
+  userUpdate: UserInfo | null;
 }
 
 const initialState: UserStateType = {
   arrAllUser: [],
   userInfoLogin: null,
   userDetailbyID: null,
+  userUpdate: null,
 };
 
 const UserReducer = createSlice({
@@ -40,6 +42,9 @@ const UserReducer = createSlice({
     ) => {
       state.userDetailbyID = action.payload;
     },
+    setUserUpdate: (state: UserStateType, action: PayloadAction<UserInfo>) => {
+      state.userUpdate = action.payload;
+    },
   },
 });
 
@@ -48,6 +53,7 @@ export const {
   setUserInfoLogin,
   removeUserLogin,
   setUserDetailbyID,
+  setUserUpdate,
 } = UserReducer.actions;
 
 export default UserReducer.reducer;
@@ -79,6 +85,16 @@ export const getUserDetailbyIDActionThunk = (id: any) => {
     const res = await httpClient.get(`/api/users/${id}`, id);
 
     const action = setUserDetailbyID(res.data.content);
+
+    dispatch(action);
+  };
+};
+
+export const getUserInfoActionThunk = (id: any) => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.get(`/api/users/${id}`, id);
+
+    const action = setUserUpdate(res.data.content);
 
     dispatch(action);
   };
