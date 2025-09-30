@@ -13,6 +13,12 @@ import Register from "./Pages/Register/Register";
 import RoomDetail from "./Pages/Detail/RoomDetail";
 import Page404 from "./Pages/Orther/Page404";
 import ComingSoon from "./Pages/Orther/ComingSoon";
+import AdminTemplate from "./Pages/Template/AdminTemplate";
+import Admin from "./Pages/Admin/Admin";
+import UserManageMent from "./Pages/Admin/ComponentAdmin/UserManageMent";
+import RoomManageMent from "./Pages/Admin/ComponentAdmin/RoomManageMent";
+import UserDetail from "./Pages/Admin/ComponentAdmin/UserDetail";
+import FormRoomManageMent from "./Pages/Admin/ComponentAdmin/FormRoomManageMent";
 export const routeLink: any = createBrowserHistory();
 
 export function App() {
@@ -22,15 +28,26 @@ export function App() {
         <HistoryRouter history={routeLink}>
           <Routes>
             <Route path="/" element={<HomeTemplate />}>
-              <Route path="/detail">
+              <Route path="detail">
                 <Route path=":id" element={<RoomDetail />} />
               </Route>
-              <Route path="/vehicle" element={<ComingSoon />} />
-              <Route path="/service" element={<ComingSoon />} />
+              <Route path="vehicle" element={<ComingSoon />} />
+              <Route path="service" element={<ComingSoon />} />
               <Route index element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
               <Route path="*" element={<Page404 />} />
+            </Route>
+            <Route path="/admin" element={<AdminTemplate />}>
+              <Route index element={<Admin />} />
+              <Route path="user">
+                <Route path=":id" element={<UserDetail />} />
+              </Route>
+              <Route path="room" element={<RoomManageMent />} />
+              <Route path="roomedit">
+                <Route path=":id" element={<FormRoomManageMent />} />
+              </Route>
+              <Route path="roomaddnew" element={<FormRoomManageMent />} />
             </Route>
           </Routes>
         </HistoryRouter>

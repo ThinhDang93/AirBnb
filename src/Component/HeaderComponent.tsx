@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import Search from "./Search";
-import Logo from "../assets/img/Logo.jpg";
+import Logo from "../assets/img/Logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import type { DispatchType, RootState } from "../redux/store";
 import { useEffect, useState } from "react";

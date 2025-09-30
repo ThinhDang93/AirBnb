@@ -1,13 +1,21 @@
 import { useFormik } from "formik";
 import type { UserLogin } from "../../assets/Models/User";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ACCESS_TOKEKN } from "../../Utils/interceptor";
-import { useDispatch } from "react-redux";
-import type { DispatchType } from "../../redux/store";
-import { getUserInfoLoginActionThunk } from "../../redux/reducers/UserReducer";
+import { ACCESS_TOKEN } from "../../Utils/interceptor";
+import { useDispatch, useSelector } from "react-redux";
+import type { DispatchType, RootState } from "../../redux/store";
+import {
+  getUserInfoLoginActionThunk,
+  removeUserLogin,
+} from "../../redux/reducers/UserReducer";
+import { useEffect } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
+
+  const { userInfoLogin } = useSelector(
+    (state: RootState) => state.UserReducer
+  );
 
   const dispatch: DispatchType = useDispatch();
   const location: any = useLocation();
@@ -19,19 +27,23 @@ const Login = () => {
     initialValues: {
       email: "",
       password: "",
+      role: "",
     },
     onSubmit: async (values, { setSubmitting }) => {
-      try {
-        localStorage.removeItem(ACCESS_TOKEKN);
-        dispatch(getUserInfoLoginActionThunk(values));
-        navigate(redirectTo || "/"); // Điều hướng về trang Home
-      } catch (err: any) {
-        alert(err.response?.data?.message || "Đăng nhập thất bại");
-      } finally {
-        setSubmitting(false);
-      }
+      localStorage.clear();
+      removeUserLogin();
+      dispatch(getUserInfoLoginActionThunk(values));
+      setSubmitting(false);
     },
   });
+
+  useEffect(() => {
+    if (userInfoLogin?.role === "USER") {
+      navigate(redirectTo || "/");
+    } else if (userInfoLogin?.role === "ADMIN") {
+      navigate("/admin/room");
+    }
+  }, [userInfoLogin]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">

@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { UserInfo, UserLogin } from "../../assets/Models/User";
 import type { DispatchType } from "../store";
-import { ACCESS_TOKEKN, httpClient } from "../../Utils/interceptor";
+import { ACCESS_TOKEN, httpClient } from "../../Utils/interceptor";
 
 export interface UserStateType {
   arrAllUser: UserInfo[];
@@ -47,6 +47,17 @@ export const getUserInfoLoginActionThunk = (values: UserLogin) => {
     const action = setUserInfoLogin(res.data.content.user);
     dispatch(action);
 
-    localStorage.setItem(ACCESS_TOKEKN, res.data.content.token);
+    localStorage.setItem(ACCESS_TOKEN, res.data.content.token);
+    localStorage.setItem("user", JSON.stringify(res.data.content.user));
+  };
+};
+
+export const getArrAllUserActionThunk = () => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.get("/api/users");
+
+    const action = setArrAllUser(res.data.content);
+
+    dispatch(action);
   };
 };

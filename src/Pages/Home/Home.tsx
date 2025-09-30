@@ -82,5 +82,14 @@ const Home = () => {
 export default Home;
 
 /**
+ *
+ * - Phần hiện thị thông tin và chức năng userLogin ở HeaderComponent
+ *
  * - Phần thêm: so sánh giữa các room
+ *
+ *
+ * phần a Cường
+ *  - Tại /admin/room click vào từng phòng -> hiển thị thông tin roomDetail
+ *  - phần slidebar -> hiện thị thông tin người dùng lên góc trên phải
+ *  - lô go xoá phông Airbnb
  */

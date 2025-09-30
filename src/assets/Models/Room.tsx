@@ -3,6 +3,7 @@ export interface HomeRoomType {
   hinhAnh: string;
   giaTien: number;
   tenPhong: string;
+  maViTri: number;
 }
 
 export interface RoomDetailType {
