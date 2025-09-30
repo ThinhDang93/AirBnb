@@ -21,7 +21,7 @@ import Admin from "./Pages/Admin/Admin";
 import RoomManageMent from "./Pages/Admin/ComponentAdmin/RoomManageMent";
 import FormRoomManageMent from "./Pages/Admin/ComponentAdmin/FormRoomManageMent";
 import UserInfoUpdate from "./Pages/User/ComponentUser/UserInfoUpdate";
-import UpdateBookingRoom from "./Pages/User/ComponentUser/BookingRoomUpdate";
+
 import BookingRoomUpdate from "./Pages/User/ComponentUser/BookingRoomUpdate";
 
 export const routeLink: any = createBrowserHistory();
