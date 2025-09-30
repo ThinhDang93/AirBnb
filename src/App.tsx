@@ -22,6 +22,7 @@ import RoomManageMent from "./Pages/Admin/ComponentAdmin/RoomManageMent";
 import FormRoomManageMent from "./Pages/Admin/ComponentAdmin/FormRoomManageMent";
 import UserInfoUpdate from "./Pages/User/ComponentUser/UserInfoUpdate";
 import BookingRoomUpdate from "./Pages/User/ComponentUser/BookingRoomUpdate";
+import UserDetailManageMent from "./Pages/Admin/ComponentAdmin/UserDetailManageMent";
 
 export const routeLink: any = createBrowserHistory();
 
@@ -44,14 +45,17 @@ export function App() {
               <Route path="user">
                 <Route path=":id" element={<UserDetail />} />
                 <Route path="edit/:id" element={<UserInfoUpdate />} />
-                <Route path="editbookingroom/:id" element={<BookingRoomUpdate/>}/>
+                <Route
+                  path="editbookingroom/:id"
+                  element={<BookingRoomUpdate />}
+                />
               </Route>
               <Route path="*" element={<Page404 />} />
             </Route>
             <Route path="/admin" element={<AdminTemplate />}>
               <Route index element={<Admin />} />
               <Route path="user">
-                <Route path=":id" element={<UserDetail />} />
+                <Route path=":id" element={<UserDetailManageMent />} />
               </Route>
               <Route path="room" element={<RoomManageMent />} />
               <Route path="roomedit">
