@@ -15,7 +15,7 @@ const Register = () => {
       phone: "",
       birthday: "",
       gender: true,
-      role: "USER",
+      role: "",
       id: -1,
       avatar: "",
     },
