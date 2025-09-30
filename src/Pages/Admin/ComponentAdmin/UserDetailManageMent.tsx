@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { httpClient } from "../../../Utils/interceptor";
 import { UpdateUserAPI } from "../../../API/UserAPI";
 
-const UserDetail = () => {
+const UserDetailManageMent = () => {
   const params = useParams();
 
   const navigate = useNavigate();
@@ -158,4 +158,4 @@ const UserDetail = () => {
   );
 };
 
-export default UserDetail;
+export default UserDetailManageMent;
