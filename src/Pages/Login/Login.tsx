@@ -1,37 +1,63 @@
 import { useFormik } from "formik";
+import * as Yup from "yup"; // 👈 thêm Yup
 import type { UserLogin } from "../../assets/Models/User";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ACCESS_TOKEKN } from "../../Utils/interceptor";
-import { useDispatch } from "react-redux";
-import type { DispatchType } from "../../redux/store";
-import { getUserInfoLoginActionThunk } from "../../redux/reducers/UserReducer";
+import { NavLink, useLocation, useMatch, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import type { DispatchType, RootState } from "../../redux/store";
+import {
+  getUserInfoLoginActionThunk,
+  removeUserLogin,
+} from "../../redux/reducers/UserReducer";
+import { useEffect } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
-
+  const match = useMatch("/login");
+  const { userInfoLogin } = useSelector(
+    (state: RootState) => state.UserReducer
+  );
   const dispatch: DispatchType = useDispatch();
   const location: any = useLocation();
 
   const queryParams = new URLSearchParams(location.search);
   const redirectTo = queryParams.get("redirectTo");
 
+  // ✅ Validation Schema
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Email không hợp lệ")
+      .required("Email không được để trống"),
+    password: Yup.string().required("Mật khẩu không được để trống"),
+  });
+
   const frmLogin = useFormik<UserLogin>({
     initialValues: {
       email: "",
       password: "",
+      role: "",
     },
+    validationSchema, // 👈 gắn vào đây
     onSubmit: async (values, { setSubmitting }) => {
-      try {
-        localStorage.removeItem(ACCESS_TOKEKN);
-        dispatch(getUserInfoLoginActionThunk(values));
-        navigate(redirectTo || "/"); // Điều hướng về trang Home
-      } catch (err: any) {
-        alert(err.response?.data?.message || "Đăng nhập thất bại");
-      } finally {
-        setSubmitting(false);
-      }
+      localStorage.clear();
+      removeUserLogin();
+      dispatch(getUserInfoLoginActionThunk(values));
+      setSubmitting(false);
     },
   });
+
+  useEffect(() => {
+    if (!match) {
+      if (userInfoLogin?.role === "Admin") {
+        navigate("/login");
+      }
+    } else {
+      if (userInfoLogin?.role === "USER") {
+        navigate(redirectTo || "/");
+      } else if (userInfoLogin?.role === "ADMIN") {
+        navigate("/admin/room");
+      }
+    }
+  }, [userInfoLogin, match]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">

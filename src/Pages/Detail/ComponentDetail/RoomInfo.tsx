@@ -85,19 +85,6 @@ const RoomInfo = () => {
           </div>
         </div>
 
-        {/* Cột phải: Booking Box */}
-        {/* <div className="bg-white shadow-xl rounded-2xl p-6 sticky top-24 h-fit">
-          <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-bold text-gray-900">
-              {roomDetail?.giaTien.toLocaleString("vi-VN")}₫
-            </span>
-            <span className="text-gray-500">/ đêm</span>
-          </div>
-
-          <button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium text-lg shadow">
-            Đặt phòng
-          </button>
-        </div> */}
         <RoomBooking />
       </div>
     </div>

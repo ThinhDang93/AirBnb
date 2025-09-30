@@ -1,16 +1,20 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { UserInfo, UserLogin } from "../../assets/Models/User";
 import type { DispatchType } from "../store";
-import { ACCESS_TOKEKN, httpClient } from "../../Utils/interceptor";
+import { ACCESS_TOKEN, httpClient } from "../../Utils/interceptor";
 
 export interface UserStateType {
   arrAllUser: UserInfo[];
   userInfoLogin: UserInfo | null;
+  userDetailbyID: UserInfo | null;
+  userUpdate: UserInfo | null;
 }
 
 const initialState: UserStateType = {
   arrAllUser: [],
   userInfoLogin: null,
+  userDetailbyID: null,
+  userUpdate: null,
 };
 
 const UserReducer = createSlice({
@@ -32,11 +36,25 @@ const UserReducer = createSlice({
     removeUserLogin: (state: UserStateType) => {
       state.userInfoLogin = null;
     },
+    setUserDetailbyID: (
+      state: UserStateType,
+      action: PayloadAction<UserInfo>
+    ) => {
+      state.userDetailbyID = action.payload;
+    },
+    setUserUpdate: (state: UserStateType, action: PayloadAction<UserInfo>) => {
+      state.userUpdate = action.payload;
+    },
   },
 });
 
-export const { setArrAllUser, setUserInfoLogin, removeUserLogin } =
-  UserReducer.actions;
+export const {
+  setArrAllUser,
+  setUserInfoLogin,
+  removeUserLogin,
+  setUserDetailbyID,
+  setUserUpdate,
+} = UserReducer.actions;
 
 export default UserReducer.reducer;
 
@@ -47,6 +65,37 @@ export const getUserInfoLoginActionThunk = (values: UserLogin) => {
     const action = setUserInfoLogin(res.data.content.user);
     dispatch(action);
 
-    localStorage.setItem(ACCESS_TOKEKN, res.data.content.token);
+    localStorage.setItem(ACCESS_TOKEN, res.data.content.token);
+    localStorage.setItem("user", JSON.stringify(res.data.content.user));
+  };
+};
+
+export const getArrAllUserActionThunk = () => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.get("/api/users");
+
+    const action = setArrAllUser(res.data.content);
+
+    dispatch(action);
+  };
+};
+
+export const getUserDetailbyIDActionThunk = (id: any) => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.get(`/api/users/${id}`, id);
+
+    const action = setUserDetailbyID(res.data.content);
+
+    dispatch(action);
+  };
+};
+
+export const getUserInfoActionThunk = (id: any) => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.get(`/api/users/${id}`, id);
+
+    const action = setUserUpdate(res.data.content);
+
+    dispatch(action);
   };
 };

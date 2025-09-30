@@ -6,9 +6,7 @@ import axios, {
 } from "axios";
 import { routeLink } from "../App";
 
-export const USER_LOGIN: string = "userLogin";
-
-export const ACCESS_TOKEKN: string = "accessToken";
+export const ACCESS_TOKEN: string = "accessToken";
 
 export const TOKEN_CYBERSOFT: string =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCBTw6FuZyAxNiIsIkhldEhhblN0cmluZyI6IjEzLzAxLzIwMjYiLCJIZXRIYW5UaW1lIjoiMTc2ODI2MjQwMDAwMCIsIm5iZiI6MTc0NTM0NDgwMCwiZXhwIjoxNzY4NDEzNjAwfQ.7HwjnwyCQy67B09sLtGp-d7oyhXyP3LUVtXaz60bQeo";
@@ -22,9 +20,9 @@ export const httpClient: AxiosInstance = axios.create({
 
 httpClient.interceptors.request.use(
   (req: InternalAxiosRequestConfig<any>) => {
-    const accessToken = localStorage.getItem(ACCESS_TOKEKN);
-    if (accessToken) {
-      req.headers.Authorization = `${accessToken}`;
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+      req.headers.token = `${token}`;
     }
     req.headers.TokenCyberSoft = TOKEN_CYBERSOFT;
     return req;

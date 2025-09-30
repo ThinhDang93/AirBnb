@@ -80,7 +80,3 @@ const Home = () => {
 };
 
 export default Home;
-
-/**
- * - Phần thêm: so sánh giữa các room
- */
