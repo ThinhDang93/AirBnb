@@ -21,6 +21,7 @@ const RoomBooking = () => {
     Omit<BookingRoomType, "maPhong" | "maNguoiDung">
   >({
     initialValues: {
+      id: -1,
       ngayDen: "",
       ngayDi: "",
       soLuongKhach: 1,

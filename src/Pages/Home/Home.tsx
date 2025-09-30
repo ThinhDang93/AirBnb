@@ -82,5 +82,8 @@ const Home = () => {
 export default Home;
 
 /**
+ *
+ * - Phần hiện thị thông tin và chức năng userLogin ở HeaderComponent
+ *
  * - Phần thêm: so sánh giữa các room
  */

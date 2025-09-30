@@ -28,6 +28,7 @@ export interface RoomDetailType {
 }
 
 export interface BookingRoomType {
+  id: number;
   maPhong: number;
   ngayDen: string;
   ngayDi: string;

@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { NavLink, useNavigate } from "react-router-dom";
 import type { UserInfo } from "../../assets/Models/User";
-import { postDataRegisterAPI } from "../../API/RegisterAPI";
+import { postDataRegisterAPI } from "../../API/UserAPI";
 
 const Register = () => {
   const navigate = useNavigate();

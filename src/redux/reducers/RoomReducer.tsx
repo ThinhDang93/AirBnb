@@ -12,6 +12,7 @@ export interface RoomStateType {
   arrRoombyid: Record<number, HomeRoomType[]>;
   roomDetail: RoomDetailType | null;
   roomBookingbyUser: BookingRoomType | null;
+  roomBookingDetail: BookingRoomType[];
 }
 
 const initialState: RoomStateType = {
@@ -19,6 +20,7 @@ const initialState: RoomStateType = {
   arrRoombyid: {},
   roomDetail: null,
   roomBookingbyUser: null,
+  roomBookingDetail: [],
 };
 
 const RoomReducer = createSlice({
@@ -55,6 +57,13 @@ const RoomReducer = createSlice({
     ) => {
       state.roomBookingbyUser = action.payload;
     },
+
+    setBookingRoomDetail: (
+      state: RoomStateType,
+      action: PayloadAction<BookingRoomType[]>
+    ) => {
+      state.roomBookingDetail = action.payload;
+    },
   },
 });
 
@@ -63,6 +72,7 @@ export const {
   setArrAllRoom,
   setRoomDetail,
   setRoomBookingbyUser,
+  setBookingRoomDetail,
 } = RoomReducer.actions;
 export default RoomReducer.reducer;
 
@@ -106,6 +116,19 @@ export const postInfoBookingRoomActionThunk = (
     const res = await httpClient.post("/api/dat-phong", infoBooking);
 
     const action = setRoomBookingbyUser(res.data.content);
+    dispatch(action);
+  };
+};
+
+export const getBookingRoomDetailActionThunk = (id: any) => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.get(
+      `/api/dat-phong/lay-theo-nguoi-dung/${id}`,
+      id
+    );
+
+    const action = setBookingRoomDetail(res.data.content);
+
     dispatch(action);
   };
 };

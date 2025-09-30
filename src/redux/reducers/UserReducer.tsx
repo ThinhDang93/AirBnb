@@ -6,11 +6,13 @@ import { ACCESS_TOKEKN, httpClient } from "../../Utils/interceptor";
 export interface UserStateType {
   arrAllUser: UserInfo[];
   userInfoLogin: UserInfo | null;
+  userDetailbyID: UserInfo | null ;
 }
 
 const initialState: UserStateType = {
   arrAllUser: [],
   userInfoLogin: null,
+  userDetailbyID: null,
 };
 
 const UserReducer = createSlice({
@@ -32,11 +34,21 @@ const UserReducer = createSlice({
     removeUserLogin: (state: UserStateType) => {
       state.userInfoLogin = null;
     },
+    setUserDetailbyID: (
+      state: UserStateType,
+      action: PayloadAction<UserInfo>
+    ) => {
+      state.userDetailbyID = action.payload;
+    },
   },
 });
 
-export const { setArrAllUser, setUserInfoLogin, removeUserLogin } =
-  UserReducer.actions;
+export const {
+  setArrAllUser,
+  setUserInfoLogin,
+  removeUserLogin,
+  setUserDetailbyID,
+} = UserReducer.actions;
 
 export default UserReducer.reducer;
 
@@ -48,5 +60,15 @@ export const getUserInfoLoginActionThunk = (values: UserLogin) => {
     dispatch(action);
 
     localStorage.setItem(ACCESS_TOKEKN, res.data.content.token);
+  };
+};
+
+export const getUserDetailbyIDActionThunk = (id: any) => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.get(`/api/users/${id}`, id);
+
+    const action = setUserDetailbyID(res.data.content);
+
+    dispatch(action);
   };
 };
