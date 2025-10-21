@@ -49,12 +49,21 @@ export const HeaderComponent = () => {
 
           {/* User login */}
           {userInfoLogin === null ? (
-            <NavLink
-              to="/login"
-              className="px-4 py-2 rounded-lg border hover:bg-gray-100"
-            >
-              Sign in
-            </NavLink>
+            <div>
+              <NavLink
+                to="/login"
+                className="px-4 py-2 rounded-lg border hover:bg-gray-100 mr-2"
+              >
+                Sign in
+              </NavLink>
+
+              <NavLink
+                to="/register"
+                className="px-4 py-2 rounded-lg border hover:bg-gray-100"
+              >
+                Sign up
+              </NavLink>
+            </div>
           ) : (
             <div className="relative">
               <button

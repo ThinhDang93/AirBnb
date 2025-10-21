@@ -42,21 +42,18 @@ export function App() {
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
 
-              <Route path="user">
-                <Route path=":id" element={<UserDetail />} />
-                <Route path="edit/:id" element={<UserInfoUpdate />} />
-                <Route
-                  path="editbookingroom/:id"
-                  element={<BookingRoomUpdate />}
-                />
-              </Route>
+              <Route path="user/:id" element={<UserDetail />} />
+              <Route path="user/edit/:id" element={<UserInfoUpdate />} />
+              <Route
+                path="user/editbookingroom/:id"
+                element={<BookingRoomUpdate />}
+              />
+
               <Route path="*" element={<Page404 />} />
             </Route>
             <Route path="/admin" element={<AdminTemplate />}>
               <Route index element={<Admin />} />
-              <Route path="user">
-                <Route path=":id" element={<UserDetailManageMent />} />
-              </Route>
+              <Route path="user/:id" element={<UserDetailManageMent />} />
               <Route path="room" element={<RoomManageMent />} />
               <Route path="roomedit">
                 <Route path=":id" element={<FormRoomManageMent />} />

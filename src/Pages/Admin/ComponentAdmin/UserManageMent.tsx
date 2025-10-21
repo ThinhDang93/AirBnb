@@ -72,7 +72,17 @@ const UserManageMent = () => {
                   <FaEdit /> Update
                 </NavLink>
                 <button
-                  onClick={() => handleDelete(user.id)}
+                  onClick={() => {
+                    const isConfirmed = confirm(
+                      "Bạn có chắc muốn xoá người dùng này không?"
+                    );
+                    if (!isConfirmed) {
+                      return;
+                    }
+
+                    handleDelete(user.id);
+                    alert("Đã xoá thành công!");
+                  }}
                   className="flex items-center gap-1 px-4 py-2.5 bg-red-500 text-white rounded-md  hover:bg-red-600 text-xs"
                 >
                   <FaTrash /> Delete

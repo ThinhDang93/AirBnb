@@ -137,11 +137,21 @@ const UserDetail = () => {
                         </NavLink>
                         {/* Nút Xoá */}
                         <button
-                          onClick={() => DeleteRoomBookingbyMaPhong(b.id)}
+                          onClick={() => {
+                            const isConfirmed = confirm(
+                              "Bạn có chắc muốn huỷ đặt phòng này không?"
+                            );
+                            if (!isConfirmed) {
+                              return;
+                            }
+
+                            DeleteRoomBookingbyMaPhong(b.id);
+                            alert("Đã huỷ thành công!");
+                          }}
                           className="flex items-center gap-2 px-5 py-2 bg-red-100 text-red-700 
                  rounded-full hover:bg-red-200 transition font-medium border border-red-300 shadow-sm"
                         >
-                          🗑️ <span>Xoá</span>
+                          ❌ <span>Huỷ</span>
                         </button>
                       </div>
                     </td>

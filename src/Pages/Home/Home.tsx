@@ -1,55 +1,100 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllRoom, getRoomByID } from "../../redux/reducers/RoomReducer";
+import { getRoomByID, getRoomByPage } from "../../redux/reducers/RoomReducer";
 import RoomCart from "./ComponentHome/RoomCart";
 import type { RootState, DispatchType } from "../../redux/store";
 import type { HomeRoomType } from "../../assets/Models/Room";
 
 const Home = () => {
-  const dispatch: DispatchType = useDispatch();
-  const { isSearch } = useSelector((state: any) => state.SearchReducer);
-
-  const { arrAllroom, arrRoombyid } = useSelector(
+  const { arrAllroom, arrRoombyid, arrRoomByPage, pagination } = useSelector(
     (state: RootState) => state.RoomReducer
   );
+
+  const dispatch: DispatchType = useDispatch();
+  const [pageIndex, setPageIndex] = useState(pagination.pageIndex);
+
+  const { isSearch } = useSelector((state: any) => state.SearchReducer);
   const { arrFilteredLocation, arrAllLocation } = useSelector(
     (state: RootState) => state.LocationReducer
   );
-  // Khi arrFilteredLocation thay đổi => gọi API phù hợp
+
+  // ✅ Khi không search, gọi API phân trang
   useEffect(() => {
-    if (arrFilteredLocation.length === arrAllLocation.length) {
-      // ⬅ đây là case: user search rỗng → show all
-      dispatch(getAllRoom());
-    } else if (arrFilteredLocation.length > 0) {
-      // ⬅ có filter thật sự
+    if (!isSearch && arrFilteredLocation.length === arrAllLocation.length) {
+      dispatch(getRoomByPage(pageIndex));
+    }
+  }, [pageIndex]);
+  // ✅ Khi có filter thật sự
+  useEffect(() => {
+    if (arrFilteredLocation.length > 0) {
       arrFilteredLocation.forEach((loc) => {
         if (!arrRoombyid[loc.id]) {
           dispatch(getRoomByID(loc.id));
         }
       });
     }
-    // nếu length === 0 và !== arrAllLocation.length → notfound
-  }, [arrFilteredLocation, arrAllLocation.length, dispatch, arrRoombyid]);
+  }, [arrFilteredLocation, arrRoombyid]);
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage > 0 && newPage <= pagination.totalPages) {
+      setPageIndex(newPage);
+    }
+  };
 
   return (
     <div className="container py-10 space-y-10">
-      {/* Trường hợp không tìm thấy */}
+      {/* ❌ Không tìm thấy */}
       {arrFilteredLocation.length === 0 &&
       arrAllLocation.length > 0 &&
-      isSearch === true ? ( // allLocation > 0 để tránh khi mới load
+      isSearch === true ? (
         <p className="text-center text-gray-500 italic">
           ❌ Không tìm thấy thành phố phù hợp
         </p>
       ) : arrFilteredLocation.length === arrAllLocation.length ||
         isSearch === false ? (
-        // Trường hợp search rỗng → getAll
-        <div className="grid grid-cols-4 gap-4">
-          {arrAllroom.map((room: HomeRoomType) => (
-            <RoomCart key={room.id} room={room} />
-          ))}
-        </div>
+        <>
+          {/* ✅ Render danh sách phòng */}
+          <div className="grid grid-cols-4 gap-4">
+            {(arrRoomByPage.length > 0 ? arrRoomByPage : arrAllroom).map(
+              (room: HomeRoomType) => (
+                <RoomCart key={room.id} room={room} />
+              )
+            )}
+          </div>
+
+          {/* ✅ Pagination */}
+          {pagination.totalPages > 1 && (
+            <div className="flex justify-center items-center gap-3 mt-6">
+              <button
+                disabled={pageIndex === 1}
+                onClick={() => {
+                  handlePageChange(pageIndex - 1);
+                  dispatch(getRoomByPage(pageIndex - 1));
+                }}
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+              >
+                ⬅ Prev
+              </button>
+
+              <span>
+                Trang {pageIndex} / {pagination.totalPages}
+              </span>
+
+              <button
+                disabled={pageIndex === pagination.totalPages}
+                onClick={() => {
+                  handlePageChange(pageIndex + 1);
+                  dispatch(getRoomByPage(pageIndex + 1));
+                }}
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+              >
+                Next ➡
+              </button>
+            </div>
+          )}
+        </>
       ) : (
-        // Có filter → render theo từng vị trí
+        // ✅ Có filter → render theo từng vị trí
         arrFilteredLocation.map((loc) => (
           <div key={loc.id}>
             <div className="mb-4 flex items-center gap-4">
