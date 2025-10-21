@@ -36,3 +36,10 @@ export interface BookingRoomType {
   soLuongKhach: number;
   maNguoiDung: number;
 }
+
+export interface PaginationType {
+  pageIndex: number;
+  pageSize: number;
+  totalRow: number;
+  totalPages: number;
+}

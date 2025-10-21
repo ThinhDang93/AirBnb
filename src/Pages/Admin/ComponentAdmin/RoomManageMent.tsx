@@ -68,7 +68,17 @@ const RoomManageMent = () => {
                     Sửa
                   </NavLink>
                   <button
-                    onClick={() => handleDelete(room.id)}
+                    onClick={() => {
+                      const isConfirmed = confirm(
+                        "Bạn có chắc muốn xoá phòng này không?"
+                      );
+                      if (!isConfirmed) {
+                        return;
+                      }
+
+                      handleDelete(room.id);
+                      alert("Đã xoá thành công!");
+                    }}
                     className="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
                   >
                     Xoá

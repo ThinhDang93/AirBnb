@@ -28,8 +28,25 @@ const RoomBooking = () => {
     },
 
     validationSchema: Yup.object({
-      ngayDen: Yup.string().required("Vui lòng chọn ngày check-in"),
-      ngayDi: Yup.string().required("Vui lòng chọn ngày check-out"),
+      ngayDen: Yup.string()
+        .required("Vui lòng chọn ngày check-in")
+        .test("not-in-past", "Ngày check-in không được ở quá khứ", (value) => {
+          if (!value) return true;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          return new Date(value) >= today;
+        }),
+      ngayDi: Yup.string()
+        .required("Vui lòng chọn ngày check-out")
+        .test(
+          "is-after-start",
+          "Ngày check-out phải sau hoặc bằng ngày check-in",
+          function (value) {
+            const { ngayDen } = this.parent;
+            if (!ngayDen || !value) return true; // chưa nhập đủ thì bỏ qua
+            return new Date(value) >= new Date(ngayDen);
+          }
+        ),
       soLuongKhach: Yup.number()
         .min(1, "Số khách phải ≥ 1")
         .max(roomDetail?.khach ?? 1, `Tối đa ${roomDetail?.khach ?? 1} khách`),

@@ -37,11 +37,15 @@ const Login = () => {
       role: "",
     },
     validationSchema, // 👈 gắn vào đây
-    onSubmit: async (values, { setSubmitting }) => {
-      localStorage.clear();
-      removeUserLogin();
-      dispatch(getUserInfoLoginActionThunk(values));
-      setSubmitting(false);
+    onSubmit: async (values) => {
+      try {
+        localStorage.clear();
+        removeUserLogin();
+        await dispatch(getUserInfoLoginActionThunk(values)); // ✅ thêm await
+      } catch (err: any) {
+        alert("Đăng nhập thất bại");
+        console.error(err);
+      }
     },
   });
 

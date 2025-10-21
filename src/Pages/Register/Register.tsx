@@ -15,7 +15,7 @@ const Register = () => {
       phone: "",
       birthday: "",
       gender: true,
-      role: "",
+      role: "USER",
       id: -1,
       avatar: "",
     },
@@ -31,11 +31,10 @@ const Register = () => {
         .matches(/^[0-9]+$/, "Số điện thoại chỉ được chứa số")
         .required("Vui lòng nhập số điện thoại"),
       birthday: Yup.string().required("Vui lòng nhập ngày sinh"),
-      role: Yup.string().required("Vui lòng chọn vai trò"),
     }),
     onSubmit: async (values) => {
       try {
-        postDataRegisterAPI(values);
+        await postDataRegisterAPI(values);
         alert("Đăng ký thành công!");
         navigate("/login");
       } catch (err: any) {
@@ -170,6 +169,7 @@ const Register = () => {
                   ? "border-red-400 focus:ring-red-300"
                   : "border-gray-300 focus:ring-blue-400"
               }`}
+              placeholder="Nhập ngày sinh của bạn"
               value={frmRegister.values.birthday}
               onChange={frmRegister.handleChange}
               onBlur={frmRegister.handleBlur}
@@ -206,23 +206,6 @@ const Register = () => {
                 Nữ
               </label>
             </div>
-          </div>
-
-          {/* Role */}
-          <div>
-            <label htmlFor="role" className="block text-gray-700 mb-1">
-              Vai trò
-            </label>
-            <select
-              id="role"
-              name="role"
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              value={frmRegister.values.role}
-              onChange={frmRegister.handleChange}
-            >
-              <option value="USER">Người dùng</option>
-              <option value="ADMIN">Quản trị</option>
-            </select>
           </div>
 
           {/* Submit */}

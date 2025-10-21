@@ -6,3 +6,12 @@ export interface CommentType {
   tenNguoiBinhLuan: string;
   avatar: string;
 }
+
+export interface CommentTypeByUser {
+  id: number;
+  maPhong: number;
+  maNguoiBinhLuan: number;
+  ngayBinhLuan: string;
+  noiDung: string;
+  saoBinhLuan: number;
+}

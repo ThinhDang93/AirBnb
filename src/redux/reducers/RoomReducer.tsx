@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type {
   BookingRoomType,
   HomeRoomType,
+  PaginationType,
   RoomDetailType,
 } from "../../assets/Models/Room";
 import type { DispatchType } from "../store";
@@ -9,6 +10,7 @@ import { httpClient } from "../../Utils/interceptor";
 
 export interface RoomStateType {
   arrAllroom: HomeRoomType[];
+  arrRoomByPage: HomeRoomType[];
   arrRoombyid: Record<number, HomeRoomType[]>;
   roomDetail: RoomDetailType | null;
   roomBookingbyUser: BookingRoomType | null;
@@ -18,10 +20,12 @@ export interface RoomStateType {
   roomDetailManageByID: RoomDetailType | null;
   roomBookingUpdate: BookingRoomType | null;
   roomDetailBookingUpdate: RoomDetailType | null;
+  pagination: PaginationType;
 }
 
 const initialState: RoomStateType = {
   arrAllroom: [],
+  arrRoomByPage: [],
   arrRoombyid: {},
   roomDetail: null,
   roomBookingbyUser: null,
@@ -31,6 +35,7 @@ const initialState: RoomStateType = {
   roomDetailManageByID: null,
   roomBookingUpdate: null,
   roomDetailBookingUpdate: null,
+  pagination: { pageIndex: 1, pageSize: 16, totalRow: 0, totalPages: 1 },
 };
 
 const RoomReducer = createSlice({
@@ -45,6 +50,13 @@ const RoomReducer = createSlice({
         ...state.arrRoombyid, // giữ lại dữ liệu cũ
         ...action.payload, // merge dữ liệu mới
       };
+    },
+
+    setArrRoomByPage: (
+      state: RoomStateType,
+      action: PayloadAction<HomeRoomType[]>
+    ) => {
+      state.arrRoomByPage = action.payload;
     },
 
     setArrAllRoom: (
@@ -92,15 +104,22 @@ const RoomReducer = createSlice({
     ) => {
       state.roomDetailBookingUpdate = action.payload;
     },
+    setPagination: (
+      state: RoomStateType,
+      action: PayloadAction<PaginationType>
+    ) => {
+      state.pagination = action.payload;
+    },
   },
 });
 
 export const {
   setArrRoomById,
   setArrAllRoom,
+  setArrRoomByPage,
   setRoomDetail,
   setRoomBookingbyUser,
-
+  setPagination,
   setBookingRoomDetail,
 
   setRoomDetailManageMent,
@@ -130,6 +149,28 @@ export const getAllRoom = () => {
 
     const action = setArrAllRoom(res.data.content);
     dispatch(action);
+  };
+};
+
+export const getRoomByPage = (pageIndexa: number) => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.get(
+      `/api/phong-thue/phan-trang-tim-kiem?pageIndex=${pageIndexa}&pageSize=16`
+    );
+
+    const { pageIndex: idx, pageSize, totalRow, data } = res.data.content;
+
+    const totalPages = Math.ceil(totalRow / pageSize);
+
+    dispatch(setArrRoomByPage(data));
+    dispatch(
+      setPagination({
+        pageIndex: idx,
+        pageSize,
+        totalRow,
+        totalPages,
+      })
+    );
   };
 };
 
