@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import type { DispatchType, RootState } from "../../../redux/store";
 import { getRoomDetailActionThunk } from "../../../redux/reducers/RoomReducer";
+import { getAllLocaActionThunk } from "../../../redux/reducers/LocationReducer";
 import RoomBooking from "./RoomBooking";
 import { Helmet } from "react-helmet-async";
 
@@ -12,14 +13,27 @@ const RoomInfo = () => {
   const dispatch: DispatchType = useDispatch();
 
   const { roomDetail } = useSelector((state: RootState) => state.RoomReducer);
+  const { arrAllLocation } = useSelector(
+    (state: RootState) => state.LocationReducer
+  );
 
-  const getRoomDetailAPI = () => {
-    dispatch(getRoomDetailActionThunk(id as any));
-  };
-
+  // ✅ Lấy chi tiết phòng
   useEffect(() => {
-    getRoomDetailAPI();
-  }, []);
+    if (id) dispatch(getRoomDetailActionThunk(id as any));
+  }, [dispatch, id]);
+
+  // ✅ Lấy danh sách vị trí nếu chưa có
+  useEffect(() => {
+    if (arrAllLocation.length === 0) {
+      dispatch(getAllLocaActionThunk());
+    }
+  }, [dispatch, arrAllLocation.length]);
+
+  // ✅ Tìm vị trí tương ứng
+  const location = useMemo(() => {
+    return arrAllLocation.find((loca) => loca.id === roomDetail?.maViTri);
+  }, [arrAllLocation, roomDetail?.maViTri]);
+
   return (
     <>
       <Helmet>
@@ -33,6 +47,7 @@ const RoomInfo = () => {
           content="Đặt phòng du lịch, homestay, villa, khách sạn giá tốt nhất."
         />
       </Helmet>
+
       <div>
         {/* Hình ảnh */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -41,38 +56,34 @@ const RoomInfo = () => {
             alt={roomDetail?.tenPhong}
             className="w-full h-96 object-cover rounded-2xl shadow"
           />
-          {/* Ảnh phụ hoặc giữ nguyên một ảnh */}
           <div className="grid grid-cols-2 gap-2">
-            <img
-              src={roomDetail?.hinhAnh}
-              className="rounded-lg object-cover h-48"
-            />
-            <img
-              src={roomDetail?.hinhAnh}
-              className="rounded-lg object-cover h-48"
-            />
-            <img
-              src={roomDetail?.hinhAnh}
-              className="rounded-lg object-cover h-48"
-            />
-            <img
-              src={roomDetail?.hinhAnh}
-              className="rounded-lg object-cover h-48"
-            />
+            {[...Array(4)].map((_, index) => (
+              <img
+                key={index}
+                src={roomDetail?.hinhAnh}
+                className="rounded-lg object-cover h-48"
+                alt={`phòng ${index}`}
+              />
+            ))}
           </div>
         </div>
 
         {/* Thông tin chi tiết */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cột trái: thông tin phòng */}
+          {/* Cột trái */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Tên + thông tin */}
+            {/* Tên phòng */}
             <div>
               <h1 className="text-3xl font-bold">{roomDetail?.tenPhong}</h1>
               <p className="text-gray-600">
                 {roomDetail?.khach} khách · {roomDetail?.phongNgu} phòng ngủ ·{" "}
                 {roomDetail?.giuong} giường · {roomDetail?.phongTam} phòng tắm
               </p>
+              {location && (
+                <p className="text-gray-500 mt-1">
+                  📍 {location.tenViTri}, {location.tinhThanh}
+                </p>
+              )}
             </div>
 
             {/* Tiện nghi */}
@@ -98,8 +109,31 @@ const RoomInfo = () => {
                 {roomDetail?.moTa}
               </p>
             </div>
+
+            {/* ✅ Bản đồ vị trí */}
+            {location && (
+              <div className="mt-8">
+                <h2 className="text-xl font-semibold mb-3">
+                  Vị trí trên bản đồ
+                </h2>
+                <div className="rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                  <iframe
+                    title="Google Map"
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(
+                      `${location.tenViTri}, ${location.tinhThanh}`
+                    )}&output=embed`}
+                    width="100%"
+                    height="400"
+                    loading="lazy"
+                    className="w-full border-0"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* Cột phải */}
           <RoomBooking />
         </div>
       </div>
