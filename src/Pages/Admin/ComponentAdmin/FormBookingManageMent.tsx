@@ -138,7 +138,7 @@ const FormBookingManageMent = () => {
   const totalPrice = (roomDetail?.giaTien ?? 0) * nights;
 
   return (
-    <div className="p-6 sm:ml-64 min-h-screen bg-gray-50">
+    <div className="p-6 sm:ml-64 min-h-screen ">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8">
         {/* Header */}
         <div className="flex items-center justify-between border-b pb-4 mb-6">

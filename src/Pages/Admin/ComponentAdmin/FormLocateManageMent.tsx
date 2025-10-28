@@ -51,7 +51,7 @@ const FormLocateManageMent = () => {
   }, [isEdit, id]);
 
   return (
-    <div className="transition-all duration-300 lg:ml-64 min-h-screen bg-gray-50">
+    <div className="transition-all duration-300 lg:ml-64 min-h-screen ">
       <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8 mt-8">
         <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
           {isEdit ? "Cập nhật vị trí" : "Thêm vị trí mới"}
