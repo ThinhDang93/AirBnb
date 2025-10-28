@@ -56,7 +56,7 @@ const LocateManageMent = () => {
             />
           </Helmet>
     
-    <div className="p-5 sm:ml-64 ">
+    <div className="transition-all duration-300 lg:ml-64">
       <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">

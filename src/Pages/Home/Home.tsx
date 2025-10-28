@@ -25,6 +25,7 @@ const Home = () => {
       dispatch(getRoomByPage(pageIndex));
     }
   }, [pageIndex]);
+
   // ✅ Khi có filter thật sự
   useEffect(() => {
     if (arrFilteredLocation.length > 0) {
@@ -52,7 +53,7 @@ const Home = () => {
         />
       </Helmet>
 
-      <div className="container py-10 space-y-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
         {/* ❌ Không tìm thấy */}
         {arrFilteredLocation.length === 0 &&
         arrAllLocation.length > 0 &&
@@ -64,7 +65,15 @@ const Home = () => {
           isSearch === false ? (
           <>
             {/* ✅ Render danh sách phòng */}
-            <div className="grid grid-cols-4 gap-4">
+            <div
+              className="
+                grid gap-6
+                grid-cols-1 
+                sm:grid-cols-2 
+                md:grid-cols-3 
+                lg:grid-cols-4
+              "
+            >
               {(arrRoomByPage.length > 0 ? arrRoomByPage : arrAllroom).map(
                 (room: HomeRoomType) => (
                   <RoomCart key={room.id} room={room} />
@@ -74,19 +83,19 @@ const Home = () => {
 
             {/* ✅ Pagination */}
             {pagination.totalPages > 1 && (
-              <div className="flex justify-center items-center gap-3 mt-6">
+              <div className="flex flex-wrap justify-center items-center gap-3 mt-8">
                 <button
                   disabled={pageIndex === 1}
                   onClick={() => {
                     handlePageChange(pageIndex - 1);
                     dispatch(getRoomByPage(pageIndex - 1));
                   }}
-                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   ⬅ Prev
                 </button>
 
-                <span>
+                <span className="text-sm sm:text-base font-medium">
                   Trang {pageIndex} / {pagination.totalPages}
                 </span>
 
@@ -96,7 +105,7 @@ const Home = () => {
                     handlePageChange(pageIndex + 1);
                     dispatch(getRoomByPage(pageIndex + 1));
                   }}
-                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next ➡
                 </button>
@@ -106,23 +115,33 @@ const Home = () => {
         ) : (
           // ✅ Có filter → render theo từng vị trí
           arrFilteredLocation.map((loc) => (
-            <div key={loc.id}>
-              <div className="mb-4 flex items-center gap-4">
+            <div key={loc.id} className="space-y-4">
+              <div className="flex items-center gap-4">
                 <img
                   src={loc.hinhAnh}
                   alt={loc.tenViTri}
-                  className="w-16 h-16 rounded-lg object-cover"
+                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover"
                 />
-                <h2 className="text-xl font-bold">{loc.tenViTri}</h2>
+                <h2 className="text-lg sm:text-xl font-bold">
+                  {loc.tenViTri}
+                </h2>
               </div>
 
-              <div className="grid grid-cols-4 gap-4">
+              <div
+                className="
+                  grid gap-6
+                  grid-cols-1
+                  sm:grid-cols-2
+                  md:grid-cols-3
+                  lg:grid-cols-4
+                "
+              >
                 {arrRoombyid[loc.id]?.length > 0 ? (
                   arrRoombyid[loc.id].map((room: HomeRoomType) => (
                     <RoomCart key={room.id} room={room} />
                   ))
                 ) : (
-                  <p className="col-span-4 text-gray-500 italic">
+                  <p className="col-span-full text-gray-500 italic text-center">
                     Không có phòng nào cho vị trí này.
                   </p>
                 )}

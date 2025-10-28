@@ -6,6 +6,7 @@ import type { DispatchType, RootState } from "../redux/store";
 import { useEffect, useState } from "react";
 import { removeUserLogin } from "../redux/reducers/UserReducer";
 import MenuBar from "./MenuBar";
+import { FaUserCircle } from "react-icons/fa";
 
 export const HeaderComponent = () => {
   const { userInfoLogin } = useSelector(
@@ -42,29 +43,43 @@ export const HeaderComponent = () => {
             <span className="font-bold text-xl">AirBnb</span>
           </NavLink>
 
-          {/* Search bar (luôn hiển thị) */}
+          {/* Search bar */}
           <div className="flex-1 mx-8 items-center">
             {!isRolled && <MenuBar />}
             <Search />
           </div>
 
-          {/* User login */}
+          {/* User login / signup */}
           {userInfoLogin === null ? (
-            <div>
-              <NavLink
-                to="/login"
-                className="px-4 py-2 rounded-lg border hover:bg-gray-100 mr-2"
-              >
-                Sign in
-              </NavLink>
+            <>
+              {/* ✅ Desktop view */}
+              <div className="hidden md:flex items-center">
+                <NavLink
+                  to="/login"
+                  className="px-4 py-2 rounded-lg border hover:bg-gray-100 mr-2 transition"
+                >
+                  Sign in
+                </NavLink>
 
-              <NavLink
-                to="/register"
-                className="px-4 py-2 rounded-lg border hover:bg-gray-100"
-              >
-                Sign up
-              </NavLink>
-            </div>
+                <NavLink
+                  to="/register"
+                  className="px-4 py-2 rounded-lg border hover:bg-gray-100 transition"
+                >
+                  Sign up
+                </NavLink>
+              </div>
+
+              {/* ✅ Mobile view */}
+              <div className="md:hidden">
+                <button
+                  onClick={() => navigate("/login")}
+                  className="p-2 rounded-full hover:bg-gray-200 transition"
+                  title="Login / Register"
+                >
+                  <FaUserCircle className="text-2xl text-gray-700" />
+                </button>
+              </div>
+            </>
           ) : (
             <div className="relative">
               <button
@@ -76,7 +91,9 @@ export const HeaderComponent = () => {
                   className="w-8 h-8 rounded-full"
                   alt="avatar"
                 />
-                <span className="font-medium">{userInfoLogin.name}</span>
+                <span className="hidden md:inline font-medium">
+                  {userInfoLogin.name}
+                </span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4 text-gray-500"
@@ -96,7 +113,6 @@ export const HeaderComponent = () => {
               {/* Dropdown Menu */}
               {open && (
                 <div className="absolute right-0 mt-2 w-44 bg-white border shadow-lg rounded-xl overflow-hidden">
-                  {/* Dashboard */}
                   <NavLink
                     to={`/user/${userInfoLogin.id}`}
                     className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
@@ -115,7 +131,7 @@ export const HeaderComponent = () => {
                     <span className="font-medium">Dashboard</span>
                   </NavLink>
 
-                  {/* ✅ Chỉ hiển thị nếu role là ADMIN */}
+                  {/* Admin page */}
                   {userInfoLogin?.role === "ADMIN" && (
                     <NavLink
                       to="/admin/room"
@@ -161,7 +177,7 @@ export const HeaderComponent = () => {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-9V5"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7"
                       />
                     </svg>
                     <span className="font-medium">Logout</span>

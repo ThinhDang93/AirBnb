@@ -80,7 +80,7 @@ const BookingManageMent = () => {
         />
       </Helmet>
 
-      <div className="p-5 sm:ml-64 min-h-screen">
+      <div className="transition-all duration-300 lg:ml-64 min-h-screen">
         <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">

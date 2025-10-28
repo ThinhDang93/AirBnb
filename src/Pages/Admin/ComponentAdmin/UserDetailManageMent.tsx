@@ -6,7 +6,6 @@ import { httpClient } from "../../../Utils/interceptor";
 import { PostNewUserAPI, UpdateUserAPI } from "../../../API/UserAPI";
 import * as Yup from "yup";
 
-
 const UserDetailManageMent = () => {
   const params = useParams();
   const navigate = useNavigate();
@@ -46,7 +45,7 @@ const UserDetailManageMent = () => {
     onSubmit: async (values) => {
       const payload = {
         ...values,
-        birthday: (values.birthday),
+        birthday: values.birthday,
       };
       try {
         if (isEdit) {
@@ -72,7 +71,7 @@ const UserDetailManageMent = () => {
       email: data.email ?? "",
       password: "", // NEVER populate password from server
       phone: data.phone ?? "",
-      birthday: (data.birthday),
+      birthday: data.birthday,
       gender: data.gender ?? true,
       role: data.role ?? "",
       id: data.id ?? -1,
@@ -87,10 +86,10 @@ const UserDetailManageMent = () => {
   }, [id, isEdit]);
 
   return (
-    <div className="p-5 sm:ml-64 pt-20">
+    <div className="transition-all duration-300 lg:ml-64 ">
       <form
         onSubmit={frmEditUser.handleSubmit}
-        className="space-y-6 max-w-lg mx-auto bg-white p-8 rounded-2xl shadow-lg"
+        className="space-y-6 max-w-lg mx-auto bg-white p-4 rounded-2xl shadow-lg"
       >
         <h4 className="text-3xl font-bold mb-6 text-gray-800 text-center">
           {isEdit ? "✏️ Cập nhật người dùng" : "➕ Thêm mới người dùng"}

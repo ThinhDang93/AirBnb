@@ -12,7 +12,7 @@ const Admin = () => {
         />
       </Helmet>
 
-      <div className="p-5 sm:ml-64">
+      <div className="transition-all duration-300 lg:ml-64">
         <UserManageMent />
       </div>
     </>

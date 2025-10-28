@@ -5,7 +5,7 @@ const AdminTemplate = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <SlideBar />
-      <div className="pt-5">
+      <div className="">
         <Outlet />
       </div>
     </div>
