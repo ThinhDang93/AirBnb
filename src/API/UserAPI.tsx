@@ -1,8 +1,6 @@
 import type { UserInfo } from "../assets/Models/User";
 import { httpClient } from "../Utils/interceptor";
 
-
-
 export const deleteUserAPIbyID = async (id: any) => {
   return await httpClient.delete(`/api/users?id=${id}`, id);
 };
@@ -14,3 +12,10 @@ export const postDataRegisterAPI = async (data: UserInfo) => {
   return await httpClient.post("/api/auth/signup", data);
 };
 
+export const UpdateImgUserAPI = async (data: FormData) => {
+  return await httpClient.post("/api/users/upload-avatar", data);
+};
+
+export const PostNewUserAPI = async (data: UserInfo) => {
+  return await httpClient.post("/api/users", data);
+};

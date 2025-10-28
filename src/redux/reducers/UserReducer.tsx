@@ -45,6 +45,17 @@ const UserReducer = createSlice({
     setUserUpdate: (state: UserStateType, action: PayloadAction<UserInfo>) => {
       state.userUpdate = action.payload;
     },
+    setUserUpdateAvatar: (
+      state: UserStateType,
+      action: PayloadAction<UserInfo>
+    ) => {
+      (state.userInfoLogin = action.payload),
+        (state.userDetailbyID = action.payload);
+    },
+
+    setUserDetailNull: (state: UserStateType) => {
+      state.userDetailbyID = null;
+    },
   },
 });
 
@@ -54,6 +65,8 @@ export const {
   removeUserLogin,
   setUserDetailbyID,
   setUserUpdate,
+  setUserUpdateAvatar,
+  setUserDetailNull,
 } = UserReducer.actions;
 
 export default UserReducer.reducer;
@@ -97,5 +110,22 @@ export const getUserInfoActionThunk = (id: any) => {
     const action = setUserUpdate(res.data.content);
 
     dispatch(action);
+  };
+};
+
+export const UpdateAvatarActionThunk = (data: FormData) => {
+  return async (dispatch: DispatchType) => {
+    const res = await httpClient.post("/api/users/upload-avatar", data);
+
+    const action1 = setUserUpdateAvatar(res.data.content);
+    const action2 = setUserDetailbyID(res.data.content);
+
+    dispatch(action1, action2);
+  };
+};
+
+export const SetUserDetailNullActionThunk = () => {
+  return (dispatch: DispatchType) => {
+    dispatch(setUserDetailNull());
   };
 };

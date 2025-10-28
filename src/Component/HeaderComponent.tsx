@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Search from "./Search";
 import Logo from "../assets/img/Logo.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +11,7 @@ export const HeaderComponent = () => {
   const { userInfoLogin } = useSelector(
     (state: RootState) => state.UserReducer
   );
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const dispatch: DispatchType = useDispatch();
 
@@ -99,11 +100,7 @@ export const HeaderComponent = () => {
                   <NavLink
                     to={`/user/${userInfoLogin.id}`}
                     className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
-                    onClick={() => {
-                      if (open === true) {
-                        setOpen(false);
-                      }
-                    }}
+                    onClick={() => setOpen(false)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -118,10 +115,37 @@ export const HeaderComponent = () => {
                     <span className="font-medium">Dashboard</span>
                   </NavLink>
 
+                  {/* ✅ Chỉ hiển thị nếu role là ADMIN */}
+                  {userInfoLogin?.role === "ADMIN" && (
+                    <NavLink
+                      to="/admin/room"
+                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-600 transition"
+                      onClick={() => setOpen(false)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                      <span className="font-medium">Go to Admin Page</span>
+                    </NavLink>
+                  )}
+
                   <hr className="border-t" />
+
                   {/* Logout */}
                   <button
                     onClick={() => {
+                      navigate("/login");
                       dispatch(removeUserLogin());
                     }}
                     className="flex items-center gap-2 w-full px-4 py-2 text-red-600 hover:bg-red-50 transition"

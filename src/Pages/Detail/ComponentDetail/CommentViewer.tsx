@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import type { DispatchType, RootState } from "../../../redux/store";
@@ -8,6 +8,7 @@ import { useFormik } from "formik";
 import type { CommentTypeByUser } from "../../../assets/Models/Comment";
 import * as Yup from "yup";
 import { postCommentByUser } from "../../../API/CommentAPI";
+import { getRandomAvatar } from "../../../Utils/interceptor";
 
 const CommentViewer = () => {
   const { id } = useParams();
@@ -22,6 +23,16 @@ const CommentViewer = () => {
   );
   const { roomDetail } = useSelector((state: RootState) => state.RoomReducer);
 
+  // ✅ Phân trang UI
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const commentsPerPage = 6;
+
+  const indexOfLast = currentPage * commentsPerPage;
+  const indexOfFirst = indexOfLast - commentsPerPage;
+  const currentComments = arrCommentByID.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(arrCommentByID.length / commentsPerPage);
+
+  // ✅ Formik setup
   const frmCommentByUser = useFormik<
     Omit<CommentTypeByUser, "maPhong" | "maNguoiBinhLuan">
   >({
@@ -53,17 +64,25 @@ const CommentViewer = () => {
       try {
         await postCommentByUser(payload);
         alert("Gửi bình luận thành công!");
-        resetForm(); // clear form sau khi gửi
-        if (id) dispatch(getCommentByIdActionThunk(id)); // cập nhật lại danh sách bình luận
+        resetForm();
+        if (id) dispatch(getCommentByIdActionThunk(id)); // Cập nhật lại danh sách bình luận
       } catch (err: any) {
         alert(err.response?.data?.message || "Gửi bình luận thất bại");
       }
     },
   });
 
+  // ✅ Lấy comment theo id (1 lần duy nhất khi id thay đổi)
   useEffect(() => {
     if (id) dispatch(getCommentByIdActionThunk(id));
   }, [id, dispatch]);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <section className="bg-white rounded-2xl shadow-md p-6 py-10 space-y-6">
@@ -139,14 +158,14 @@ const CommentViewer = () => {
 
       {/* Danh sách bình luận */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {arrCommentByID.map((comment) => (
+        {currentComments.map((comment) => (
           <div
             key={comment.id}
             className="flex gap-4 pb-6 border-b border-gray-200 last:border-none group"
           >
             {/* Avatar */}
             <img
-              src={comment.avatar || "/placeholder-avatar.png"}
+              src={comment.avatar || getRandomAvatar(comment.id, 60)}
               alt={comment.tenNguoiBinhLuan}
               className="w-14 h-14 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-200"
             />
@@ -186,6 +205,39 @@ const CommentViewer = () => {
           </p>
         )}
       </div>
+
+      {/* ✅ Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-6 gap-3">
+          <button
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 rounded-md border text-sm ${
+              currentPage === 1
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-white hover:bg-gray-50"
+            }`}
+          >
+            Prev
+          </button>
+
+          <span className="text-sm font-medium text-gray-600">
+            Trang {currentPage} / {totalPages}
+          </span>
+
+          <button
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 rounded-md border text-sm ${
+              currentPage === totalPages
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-white hover:bg-gray-50"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </section>
   );
 };

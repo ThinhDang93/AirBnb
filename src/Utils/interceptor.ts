@@ -57,3 +57,32 @@ httpClient.interceptors.response.use(
     }
   }
 );
+
+// 📁 src/utils/getRandomAvatar.ts
+
+// tạo cache riêng để lưu avatar đã random
+const avatarCache: Record<string | number, string> = {};
+
+/**
+ * Trả về URL avatar ngẫu nhiên theo userId.
+ * Giữ nguyên avatar cũ nếu đã random trước đó.
+ *
+ * @param id - ID duy nhất của user
+ * @param size - Kích thước avatar (mặc định 150)
+ * @returns string - URL ảnh avatar
+ */
+export function getRandomAvatar(
+  id: string | number,
+  size: number = 150
+): string {
+  if (!avatarCache[id]) {
+    const randomId = Math.floor(Math.random() * 70) + 1;
+    avatarCache[id] = `https://i.pravatar.cc/${size}?img=${randomId}`;
+  }
+  return avatarCache[id];
+}
+
+export const formatDate = (date: string) => {
+  const d = new Date(date);
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth()+1).padStart(2, "0")}/${d.getFullYear()}`;
+};

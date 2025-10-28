@@ -15,3 +15,4 @@ export interface UserInfo {
   id: number;
   avatar: string;
 }
+

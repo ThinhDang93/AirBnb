@@ -1,22 +1,26 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Logo from "../assets/img/Logo.png";
 import { removeUserLogin } from "../redux/reducers/UserReducer";
-import type { DispatchType } from "../redux/store";
-import { useDispatch } from "react-redux";
+import type { DispatchType, RootState } from "../redux/store";
+import { useDispatch, useSelector } from "react-redux";
 
 const SlideBar = () => {
   const [openMenu, setOpenMenu] = useState(null);
+  const navigate = useNavigate();
+  const { userInfoLogin } = useSelector(
+    (state: RootState) => state.UserReducer
+  );
 
   const toggleMenu = (menu: any) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
+  const toggleDropdown = () => setOpen(!open);
+
+  const [open, setOpen] = useState(false);
 
   const dispatch: DispatchType = useDispatch();
 
-  const handleLogin = () => {
-    dispatch(removeUserLogin());
-  };
   return (
     <div>
       <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -52,81 +56,110 @@ const SlideBar = () => {
                 </span>
               </NavLink>
             </div>
-            <div className="flex items-center">
-              <div className="flex items-center ms-3">
-                <div>
-                  <button
-                    type="button"
-                    className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                    aria-expanded="false"
-                    data-dropdown-toggle="dropdown-user"
+            <div className="relative">
+              <button
+                onClick={toggleDropdown}
+                className="flex items-center gap-2 px-3 py-2 border rounded-full hover:shadow-md transition"
+              >
+                <img
+                  src={userInfoLogin?.avatar || "https://i.pravatar.cc/40"}
+                  className="w-8 h-8 rounded-full"
+                  alt="avatar"
+                />
+                <span className="font-medium text-white">
+                  {userInfoLogin?.name}
+                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-gray-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {/* Dropdown Menu */}
+              {open && (
+                <div className="absolute right-0 mt-2 w-44 bg-white border shadow-lg rounded-xl overflow-hidden">
+                  {/* Dashboard */}
+                  <NavLink
+                    to={`/user/${userInfoLogin?.id}`}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
+                    onClick={() => setOpen(false)}
                   >
-                    <span className="sr-only">Open user menu</span>
-                    <img
-                      className="w-8 h-8 rounded-full"
-                      src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                      alt="user photo"
-                    />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path d="M3 12h18M3 6h18M3 18h18" />
+                    </svg>
+                    <span className="font-medium">Dashboard</span>
+                  </NavLink>
+
+                  {/* ✅ Chỉ hiển thị nếu role là ADMIN */}
+                  {userInfoLogin?.role === "ADMIN" && (
+                    <NavLink
+                      to="/admin/room"
+                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-600 transition"
+                      onClick={() => setOpen(false)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                      <span className="font-medium">Go to Admin Page</span>
+                    </NavLink>
+                  )}
+
+                  <hr className="border-t" />
+
+                  {/* Logout */}
+                  <button
+                    onClick={() => {
+                      navigate("/");
+                      dispatch(removeUserLogin());
+                    }}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-red-600 hover:bg-red-50 transition"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-9V5"
+                      />
+                    </svg>
+                    <span className="font-medium">Logout</span>
                   </button>
                 </div>
-                <div
-                  className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm dark:bg-gray-700 dark:divide-gray-600"
-                  id="dropdown-user"
-                >
-                  <div className="px-4 py-3" role="none">
-                    <p
-                      className="text-sm text-gray-900 dark:text-white"
-                      role="none"
-                    >
-                      Neil Sims
-                    </p>
-                    <p
-                      className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
-                      role="none"
-                    >
-                      neil.sims@flowbite.com
-                    </p>
-                  </div>
-                  <ul className="py-1" role="none">
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Dashboard
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Settings
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Earnings
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Sign out
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -180,6 +213,15 @@ const SlideBar = () => {
                       : "max-h-0 opacity-0 overflow-hidden"
                   }`}
                 >
+                  <li>
+                    <NavLink
+                      to={"/admin/useraddnew"}
+                      className="block p-2 rounded text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
+                    >
+                      Add new
+                    </NavLink>
+                  </li>
+
                   <li>
                     <NavLink
                       to={"/admin"}
@@ -249,50 +291,162 @@ const SlideBar = () => {
                   </li>
                 </ul>
               </li>
+              <li>
+                <button
+                  onClick={() => toggleMenu("menu3")}
+                  className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <span className="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-map-pin-icon lucide-map-pin shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                    >
+                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+                      <circle cx={12} cy={10} r={3} />
+                    </svg>
+                    <span>Locate</span>
+                  </span>
+                  <svg
+                    className={`w-3 h-3 transition-transform ${
+                      openMenu === "menu3" ? "rotate-180" : ""
+                    }`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 10 6"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="m1 1 4 4 4-4"
+                    />
+                  </svg>
+                </button>
+                <ul
+                  className={`ml-6 mt-2 space-y-2 transition-all ${
+                    openMenu === "menu3"
+                      ? "max-h-40 opacity-100"
+                      : "max-h-0 opacity-0 overflow-hidden"
+                  }`}
+                >
+                  <li>
+                    <NavLink
+                      to={"/admin/locateaddnew"}
+                      className="block p-2 rounded text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
+                    >
+                      Add New
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to={"/admin/locate"}
+                      className="block p-2 rounded text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
+                    >
+                      Locate Infomation
+                    </NavLink>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <button
+                  onClick={() => toggleMenu("menu4")}
+                  className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <span className="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-notebook-pen-icon lucide-notebook-pen shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                    >
+                      <path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4" />
+                      <path d="M2 6h4" />
+                      <path d="M2 10h4" />
+                      <path d="M2 14h4" />
+                      <path d="M2 18h4" />
+                      <path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" />
+                    </svg>
+
+                    <span>Booking</span>
+                  </span>
+                  <svg
+                    className={`w-3 h-3 transition-transform ${
+                      openMenu === "menu4" ? "rotate-180" : ""
+                    }`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 10 6"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="m1 1 4 4 4-4"
+                    />
+                  </svg>
+                </button>
+                <ul
+                  className={`ml-6 mt-2 space-y-2 transition-all ${
+                    openMenu === "menu4"
+                      ? "max-h-40 opacity-100"
+                      : "max-h-0 opacity-0 overflow-hidden"
+                  }`}
+                >
+                  <li>
+                    <NavLink
+                      to={"/admin/booking"}
+                      className="block p-2 rounded text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
+                    >
+                      Booking Infomation
+                    </NavLink>
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <NavLink
+                  to={"/"}
+                  className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <span className="flex items-center gap-2">
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-house-icon lucide-house shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                      >
+                        <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+                        <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                      </svg>
+                    </div>
+                    <span>Back to HomePage</span>
+                  </span>
+                </NavLink>
+              </li>
             </div>
-            <li>
-              <NavLink
-                to="/login"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                onClick={handleLogin}
-              >
-                <svg
-                  className="shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 18 16"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"
-                  />
-                </svg>
-                <span className="flex-1 ms-3 whitespace-nowrap">Sign In</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/register"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <svg
-                  className="shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.96 2.96 0 0 0 .13 5H5Z" />
-                  <path d="M6.737 11.061a2.961 2.961 0 0 1 .81-1.515l6.117-6.116A4.839 4.839 0 0 1 16 2.141V2a1.97 1.97 0 0 0-1.933-2H7v5a2 2 0 0 1-2 2H0v11a1.969 1.969 0 0 0 1.933 2h12.134A1.97 1.97 0 0 0 16 18v-3.093l-1.546 1.546c-.413.413-.94.695-1.513.81l-3.4.679a2.947 2.947 0 0 1-1.85-.227 2.96 2.96 0 0 1-1.635-3.257l.681-3.397Z" />
-                  <path d="M8.961 16a.93.93 0 0 0 .189-.019l3.4-.679a.961.961 0 0 0 .49-.263l6.118-6.117a2.884 2.884 0 0 0-4.079-4.078l-6.117 6.117a.96.96 0 0 0-.263.491l-.679 3.4A.961.961 0 0 0 8.961 16Zm7.477-9.8a.958.958 0 0 1 .68-.281.961.961 0 0 1 .682 1.644l-.315.315-1.36-1.36.313-.318Zm-5.911 5.911 4.236-4.236 1.359 1.359-4.236 4.237-1.7.339.341-1.699Z" />
-                </svg>
-                <span className="flex-1 ms-3 whitespace-nowrap">Sign Up</span>
-              </NavLink>
-            </li>
           </ul>
         </div>
       </aside>

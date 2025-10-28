@@ -4,6 +4,7 @@ import CommentReducer from "./reducers/CommentReducer";
 import UserReducer from "./reducers/UserReducer";
 import LocationReducer from "./reducers/LocationReducer";
 import SearchReducer from "./reducers/SearchReducer";
+import BookingReducer from "./reducers/BookingReducer";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     UserReducer,
     LocationReducer,
     SearchReducer,
+    BookingReducer,
   },
 });
 

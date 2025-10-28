@@ -4,10 +4,18 @@ import type { UserInfo } from "../../../assets/Models/User";
 import { useEffect, useState } from "react";
 import { httpClient } from "../../../Utils/interceptor";
 import { UpdateUserAPI } from "../../../API/UserAPI";
+import { UpdateAvatarActionThunk } from "../../../redux/reducers/UserReducer";
+import { useDispatch, useSelector } from "react-redux";
+import type { DispatchType, RootState } from "../../../redux/store";
 
 const UserInfoUpdate = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const dispatch: DispatchType = useDispatch();
+
+  const { userDetailbyID } = useSelector(
+    (state: RootState) => state.UserReducer
+  );
 
   const [user, setUser] = useState<UserInfo | null>(null);
 
@@ -18,9 +26,14 @@ const UserInfoUpdate = () => {
     setUser(res.data.content);
   };
 
+  const UpdateAvatarAPI = (data: FormData) => {
+    const actionThunk = UpdateAvatarActionThunk(data);
+    dispatch(actionThunk);
+  };
+
   useEffect(() => {
     getUserDetailAPI(id);
-  }, [id]);
+  }, [userDetailbyID]);
 
   // Formik config
   const frmEditUser = useFormik<UserInfo>({
@@ -48,17 +61,47 @@ const UserInfoUpdate = () => {
     <form onSubmit={frmEditUser.handleSubmit}>
       <div className="bg-white shadow-xl rounded-2xl p-10 max-w-5xl mx-auto flex gap-10 items-start pt-20">
         {/* Avatar */}
-        <div className="flex flex-col items-center w-1/3">
-          <img
-            src={frmEditUser.values.avatar || "https://i.pravatar.cc/200"}
-            alt="avatar"
-            className="w-48 h-48 rounded-full border-4 border-blue-200 shadow-lg object-cover"
-          />
-          <h2 className="mt-6 text-2xl font-bold text-gray-800 text-center">
-            {frmEditUser.values.name || "Chưa có tên"}
-          </h2>
-        </div>
+        <div className="flex flex-col items-center w-1/3 relative">
+          <div className="relative group w-48 h-48 rounded-full overflow-hidden border-4 border-blue-200 shadow-lg cursor-pointer">
+            <img
+              src={user?.avatar || "/default-avatar.png"}
+              alt="Avatar"
+              className="w-full h-full object-cover rounded-full border-4 border-blue-200 shadow-lg"
+            />
 
+            {/* Overlay hover */}
+            <label
+              htmlFor="avatar-upload"
+              className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white text-base rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+            >
+              Thay đổi avatar
+            </label>
+
+            {/* Input upload file */}
+            <input
+              type="file"
+              id="avatar-upload"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const previewURL = URL.createObjectURL(file);
+                frmEditUser.setFieldValue("avatar", previewURL);
+
+                try {
+                  const formData = new FormData();
+                  formData.append("formFile", file);
+
+                  UpdateAvatarAPI(formData);
+                } catch (err) {
+                  console.error("Lỗi upload avatar:", err);
+                }
+              }}
+            />
+          </div>
+        </div>
         {/* Thông tin user */}
         <div className="flex-1">
           <div className="grid grid-cols-2 gap-y-6 gap-x-10">

@@ -119,7 +119,7 @@ const BookingRoomUpdate = () => {
       {/* Hình ảnh */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 pt-10">
         <img
-          src={roomDetailBookingUpdate?.hinhAnh}
+          src={roomDetailBookingUpdate?.hinhAnh || "https://i.pravatar.cc/200"}
           alt={roomDetailBookingUpdate?.tenPhong}
           className="w-full h-96 object-cover rounded-2xl shadow"
         />

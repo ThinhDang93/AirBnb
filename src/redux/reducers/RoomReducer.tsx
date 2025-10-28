@@ -174,7 +174,7 @@ export const getRoomByPage = (pageIndexa: number) => {
   };
 };
 
-export const getRoomDetailActionThunk = (maPhong: string) => {
+export const getRoomDetailActionThunk = (maPhong: number) => {
   return async (dispatch: DispatchType) => {
     const res = await httpClient.get(`/api/phong-thue/${maPhong}`);
 
