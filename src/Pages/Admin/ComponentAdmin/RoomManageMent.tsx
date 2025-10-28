@@ -92,7 +92,7 @@ const RoomManagement = () => {
         />
       </Helmet>
 
-      <div className="p-5 sm:ml-64">
+      <div className="transition-all duration-300 lg:ml-64">
         <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <h2 className="text-3xl font-bold text-gray-800">
@@ -138,85 +138,86 @@ const RoomManagement = () => {
           </div>
 
           {/* Bảng */}
-                  <div className="overflow-x-auto bg-white shadow rounded-xl">
-
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-100 text-gray-700">
-                <th
-                  className="px-4 py-3 border-b cursor-pointer select-none"
-                  onClick={toggleSortOrder}
-                >
-                  <div className="flex items-center gap-1">
-                    <span>ID</span>
-                    {sortOrder === "asc" ? (
-                      <FaSortUp className="text-gray-600" />
-                    ) : (
-                      <FaSortDown className="text-gray-600" />
-                    )}
-                  </div>
-                </th>
-                <th className="px-4 py-3 border-b">Hình ảnh</th>
-                <th className="px-4 py-3 border-b">Tên phòng</th>
-                <th className="px-4 py-3 border-b">Quận / Huyện</th>
-                <th className="px-4 py-3 border-b">Thành phố</th>
-                <th className="px-4 py-3 border-b text-center">Chức năng</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {currentRooms.length > 0 ? (
-                currentRooms.map((room) => {
-                  const { tenViTri, tinhThanh } = getLocationInfo(room.maViTri);
-                  return (
-                    <tr key={room.id} className="hover:bg-gray-50 transition">
-                      <td className="px-4 py-3 border-b">{room.id}</td>
-                      <td className="px-4 py-3 border-b">
-                        <img
-                          src={room.hinhAnh}
-                          alt={room.tenPhong}
-                          className="w-20 h-14 object-cover rounded-lg shadow-sm"
-                        />
-                      </td>
-                      <td className="px-4 py-3 border-b font-medium">
-                        {room.tenPhong}
-                      </td>
-                      <td className="px-4 py-3 border-b">{tenViTri}</td>
-                      <td className="px-4 py-3 border-b">{tinhThanh}</td>
-                      <td className="px-4 py-3 border-b">
-                        <div className="flex justify-center gap-2">
-                          <NavLink
-                            to={`/admin/roomedit/${room.id}`}
-                            onClick={() =>
-                              dispatch(getRoomDetailActionThunk(room.id))
-                            }
-                            className="flex items-center gap-1 px-3 py-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 text-xs"
-                          >
-                            <FaEdit /> Update
-                          </NavLink>
-                          <button
-                            onClick={() => handleDelete(room.id)}
-                            className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-xs"
-                          >
-                            <FaTrash /> Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="text-center py-6 text-gray-500 italic"
+          <div className="overflow-x-auto bg-white shadow rounded-xl">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700">
+                  <th
+                    className="px-4 py-3 border-b cursor-pointer select-none"
+                    onClick={toggleSortOrder}
                   >
-                    Không tìm thấy phòng nào phù hợp.
-                  </td>
+                    <div className="flex items-center gap-1">
+                      <span>ID</span>
+                      {sortOrder === "asc" ? (
+                        <FaSortUp className="text-gray-600" />
+                      ) : (
+                        <FaSortDown className="text-gray-600" />
+                      )}
+                    </div>
+                  </th>
+                  <th className="px-4 py-3 border-b">Hình ảnh</th>
+                  <th className="px-4 py-3 border-b">Tên phòng</th>
+                  <th className="px-4 py-3 border-b">Quận / Huyện</th>
+                  <th className="px-4 py-3 border-b">Thành phố</th>
+                  <th className="px-4 py-3 border-b text-center">Chức năng</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {currentRooms.length > 0 ? (
+                  currentRooms.map((room) => {
+                    const { tenViTri, tinhThanh } = getLocationInfo(
+                      room.maViTri
+                    );
+                    return (
+                      <tr key={room.id} className="hover:bg-gray-50 transition">
+                        <td className="px-4 py-3 border-b">{room.id}</td>
+                        <td className="px-4 py-3 border-b">
+                          <img
+                            src={room.hinhAnh}
+                            alt={room.tenPhong}
+                            className="w-20 h-14 object-cover rounded-lg shadow-sm"
+                          />
+                        </td>
+                        <td className="px-4 py-3 border-b font-medium">
+                          {room.tenPhong}
+                        </td>
+                        <td className="px-4 py-3 border-b">{tenViTri}</td>
+                        <td className="px-4 py-3 border-b">{tinhThanh}</td>
+                        <td className="px-4 py-3 border-b">
+                          <div className="flex justify-center gap-2">
+                            <NavLink
+                              to={`/admin/roomedit/${room.id}`}
+                              onClick={() =>
+                                dispatch(getRoomDetailActionThunk(room.id))
+                              }
+                              className="flex items-center gap-1 px-3 py-2 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 text-xs"
+                            >
+                              <FaEdit /> Update
+                            </NavLink>
+                            <button
+                              onClick={() => handleDelete(room.id)}
+                              className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-xs"
+                            >
+                              <FaTrash /> Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="text-center py-6 text-gray-500 italic"
+                    >
+                      Không tìm thấy phòng nào phù hợp.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
 
           {/* Pagination */}

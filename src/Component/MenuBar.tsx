@@ -3,15 +3,15 @@ import { NavLink } from "react-router-dom";
 
 const MenuBar = () => {
   const baseClass =
-    "flex items-center gap-2 px-3 py-2 text-xl font-semibold transition-colors duration-200";
+    "flex flex-col md:flex-row items-center gap-1 md:gap-2 px-3 py-2 text-lg md:text-xl font-semibold transition-colors duration-200";
   const activeClass =
-    "text-blue-700 border-b-2 border-blue-700 md:border-none md:text-blue-700 md:dark:text-blue-500";
+    "text-blue-700 border-b-2 border-blue-700 md:border-none md:text-blue-700";
   const inactiveClass =
     "text-gray-700 hover:text-blue-700 dark:text-gray-600 md:dark:hover:text-blue-500";
 
   return (
-    <div className="flex items-center justify-center">
-      <ul className="flex flex-row space-x-6 md:space-x-10 ">
+    <div className="flex items-center justify-center w-full">
+      <ul className="flex flex-row justify-around md:space-x-10 w-full max-w-md">
         {/* Places */}
         <li>
           <NavLink
@@ -20,8 +20,8 @@ const MenuBar = () => {
               `${baseClass} ${isActive ? activeClass : inactiveClass}`
             }
           >
-            <FaMapMarkedAlt className="text-lg " />
-            Places
+            <FaMapMarkedAlt className="text-2xl md:text-lg" />
+            <span className="hidden md:inline">Places</span>
           </NavLink>
         </li>
 
@@ -33,8 +33,8 @@ const MenuBar = () => {
               `${baseClass} ${isActive ? activeClass : inactiveClass}`
             }
           >
-            <FaCar className="text-lg" />
-            Vehicles
+            <FaCar className="text-2xl md:text-lg" />
+            <span className="hidden md:inline">Vehicles</span>
           </NavLink>
         </li>
 
@@ -46,8 +46,8 @@ const MenuBar = () => {
               `${baseClass} ${isActive ? activeClass : inactiveClass}`
             }
           >
-            <FaConciergeBell className="text-lg" />
-            Services
+            <FaConciergeBell className="text-2xl md:text-lg" />
+            <span className="hidden md:inline">Services</span>
           </NavLink>
         </li>
       </ul>

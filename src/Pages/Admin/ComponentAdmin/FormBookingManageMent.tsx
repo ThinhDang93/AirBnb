@@ -66,7 +66,7 @@ const FormBookingManageMent = () => {
 
   if (!booking) {
     return (
-      <div className="p-5 sm:ml-64">
+      <div className="transition-all duration-300 lg:ml-64">
         <div className="bg-white p-6 rounded-xl shadow-lg text-center">
           <h2 className="text-xl font-semibold text-gray-700">
             Không tìm thấy thông tin đặt phòng
