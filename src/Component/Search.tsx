@@ -65,7 +65,7 @@ const Search = () => {
             }
           }}
           placeholder="Bạn muốn đi đâu?"
-          className="flex-1 rounded-full px-5 py-3 outline-none  text-black placeholder-gray-700   hover:bg-gray-200"
+          className="flex-1 rounded-full px-5 py-3  placeholder-gray-700 hover:bg-gray-200 border-none outline-none focus:outline-none focus:ring-0"
         />
 
         {/* Divider */}

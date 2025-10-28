@@ -1,6 +1,6 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Search from "./Search";
-import Logo from "../assets/img/Logo.jpg";
+import Logo from "../assets/img/Logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import type { DispatchType, RootState } from "../redux/store";
 import { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ export const HeaderComponent = () => {
   const { userInfoLogin } = useSelector(
     (state: RootState) => state.UserReducer
   );
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const dispatch: DispatchType = useDispatch();
 
@@ -49,32 +50,121 @@ export const HeaderComponent = () => {
 
           {/* User login */}
           {userInfoLogin === null ? (
-            <NavLink
-              to="/login"
-              className="px-4 py-2 rounded-lg border hover:bg-gray-100"
-            >
-              Sign in
-            </NavLink>
+            <div>
+              <NavLink
+                to="/login"
+                className="px-4 py-2 rounded-lg border hover:bg-gray-100 mr-2"
+              >
+                Sign in
+              </NavLink>
+
+              <NavLink
+                to="/register"
+                className="px-4 py-2 rounded-lg border hover:bg-gray-100"
+              >
+                Sign up
+              </NavLink>
+            </div>
           ) : (
             <div className="relative">
               <button
                 onClick={toggleDropdown}
-                className="flex items-center gap-2 px-3 py-2 border rounded-full"
+                className="flex items-center gap-2 px-3 py-2 border rounded-full hover:shadow-md transition"
               >
                 <img
                   src={userInfoLogin.avatar || "https://i.pravatar.cc/40"}
                   className="w-8 h-8 rounded-full"
                   alt="avatar"
                 />
-                <span>{userInfoLogin.name}</span>
+                <span className="font-medium">{userInfoLogin.name}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-gray-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
               </button>
+
+              {/* Dropdown Menu */}
               {open && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border shadow rounded-lg">
-                  <button
-                    onClick={() => dispatch(removeUserLogin())}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                <div className="absolute right-0 mt-2 w-44 bg-white border shadow-lg rounded-xl overflow-hidden">
+                  {/* Dashboard */}
+                  <NavLink
+                    to={`/user/${userInfoLogin.id}`}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
+                    onClick={() => setOpen(false)}
                   >
-                    Logout
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path d="M3 12h18M3 6h18M3 18h18" />
+                    </svg>
+                    <span className="font-medium">Dashboard</span>
+                  </NavLink>
+
+                  {/* ✅ Chỉ hiển thị nếu role là ADMIN */}
+                  {userInfoLogin?.role === "ADMIN" && (
+                    <NavLink
+                      to="/admin/room"
+                      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-600 transition"
+                      onClick={() => setOpen(false)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                      <span className="font-medium">Go to Admin Page</span>
+                    </NavLink>
+                  )}
+
+                  <hr className="border-t" />
+
+                  {/* Logout */}
+                  <button
+                    onClick={() => {
+                      navigate("/login");
+                      dispatch(removeUserLogin());
+                    }}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-red-600 hover:bg-red-50 transition"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-9V5"
+                      />
+                    </svg>
+                    <span className="font-medium">Logout</span>
                   </button>
                 </div>
               )}
