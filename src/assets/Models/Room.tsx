@@ -3,7 +3,6 @@ export interface HomeRoomType {
   hinhAnh: string;
   giaTien: number;
   tenPhong: string;
-  maViTri: number;
 }
 
 export interface RoomDetailType {
@@ -29,17 +28,9 @@ export interface RoomDetailType {
 }
 
 export interface BookingRoomType {
-  id: number;
   maPhong: number;
   ngayDen: string;
   ngayDi: string;
   soLuongKhach: number;
   maNguoiDung: number;
-}
-
-export interface PaginationType {
-  pageIndex: number;
-  pageSize: number;
-  totalRow: number;
-  totalPages: number;
 }

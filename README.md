@@ -67,4 +67,3 @@ export default tseslint.config([
   },
 ])
 ```
-# demo_AirBNB_Cuong

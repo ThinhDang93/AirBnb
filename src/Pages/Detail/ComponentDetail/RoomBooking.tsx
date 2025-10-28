@@ -21,32 +21,14 @@ const RoomBooking = () => {
     Omit<BookingRoomType, "maPhong" | "maNguoiDung">
   >({
     initialValues: {
-      id: -1,
       ngayDen: "",
       ngayDi: "",
       soLuongKhach: 1,
     },
 
     validationSchema: Yup.object({
-      ngayDen: Yup.string()
-        .required("Vui lòng chọn ngày check-in")
-        .test("not-in-past", "Ngày check-in không được ở quá khứ", (value) => {
-          if (!value) return true;
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          return new Date(value) >= today;
-        }),
-      ngayDi: Yup.string()
-        .required("Vui lòng chọn ngày check-out")
-        .test(
-          "is-after-start",
-          "Ngày check-out phải sau hoặc bằng ngày check-in",
-          function (value) {
-            const { ngayDen } = this.parent;
-            if (!ngayDen || !value) return true; // chưa nhập đủ thì bỏ qua
-            return new Date(value) >= new Date(ngayDen);
-          }
-        ),
+      ngayDen: Yup.string().required("Vui lòng chọn ngày check-in"),
+      ngayDi: Yup.string().required("Vui lòng chọn ngày check-out"),
       soLuongKhach: Yup.number()
         .min(1, "Số khách phải ≥ 1")
         .max(roomDetail?.khach ?? 1, `Tối đa ${roomDetail?.khach ?? 1} khách`),
@@ -64,10 +46,12 @@ const RoomBooking = () => {
         maNguoiDung: userInfoLogin?.id ?? 0, // lấy id từ store Redux
       };
 
+      console.log("📦 Payload gửi lên BE", payload);
       try {
         dispatch(postInfoBookingRoomActionThunk(payload));
         navigate("/"); //
         alert("Đặt phòng thành công!");
+        console.log(payload);
       } catch (err: any) {
         alert(err.response?.data?.message || "Đặt phòng thất bại");
       }
@@ -103,8 +87,6 @@ const RoomBooking = () => {
           <label className="block text-gray-700 mb-1">Check-in</label>
           <input
             type="date"
-            name="ngayDen"
-            id="ngayDen"
             className={`w-full border rounded-lg px-3 py-2 ${
               frmBookingRoom.errors.ngayDen && frmBookingRoom.touched.ngayDen
                 ? "border-red-500"
@@ -127,8 +109,6 @@ const RoomBooking = () => {
           <label className="block text-gray-700 mb-1">Check-out</label>
           <input
             type="date"
-            name="ngayDi"
-            id="ngayDi"
             className={`w-full border rounded-lg px-3 py-2 ${
               frmBookingRoom.errors.ngayDi && frmBookingRoom.touched.ngayDi
                 ? "border-red-500"

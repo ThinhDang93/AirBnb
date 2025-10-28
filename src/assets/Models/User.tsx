@@ -1,7 +1,6 @@
 export interface UserLogin {
   email: string;
   password: string;
-  role: string;
 }
 
 export interface UserInfo {
@@ -15,4 +14,3 @@ export interface UserInfo {
   id: number;
   avatar: string;
 }
-
