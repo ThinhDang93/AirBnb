@@ -66,7 +66,7 @@ const SlideBar = () => {
                   className="w-8 h-8 rounded-full"
                   alt="avatar"
                 />
-                <span className="font-medium text-white">
+                <span className="font-medium text-black dark:text-white">
                   {userInfoLogin?.name}
                 </span>
                 <svg
