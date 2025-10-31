@@ -9,6 +9,7 @@ import {
 } from "../../../redux/reducers/RoomReducer";
 import { FaSortUp, FaSortDown, FaEdit, FaTrash } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
+import { Modal } from "antd";
 
 const RoomManagement = () => {
   const dispatch: DispatchType = useDispatch();
@@ -30,13 +31,24 @@ const RoomManagement = () => {
     dispatch(getAllRoom());
   }, [dispatch]);
 
-  // ✅ Hàm xoá phòng
-  const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Bạn có chắc muốn xoá phòng này không?");
-    if (!isConfirmed) return;
-    await DeleteRoomAPIbyID(id);
-    alert("Đã xoá thành công!");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // State lưu ID user được chọn
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  const showModal = (id: number) => {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = async () => {
+    if (selectedId === null) return;
+    await DeleteRoomAPIbyID(selectedId);
     dispatch(getAllRoom());
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   // ✅ Lấy thông tin vị trí
@@ -51,12 +63,26 @@ const RoomManagement = () => {
   // ✅ Lọc & sắp xếp
   const filteredRooms = useMemo(() => {
     let result = arrAllroom.filter((room) => {
-      const matchesSearch = room.tenPhong
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+      // Chuẩn hóa chuỗi tìm kiếm
+      const normalizedSearch = searchTerm
+        .trim() // loại bỏ khoảng trắng đầu cuối
+        .replace(/\s+/g, " ") // gom các khoảng trắng liên tiếp thành 1
+        .normalize("NFD") // bỏ dấu tiếng Việt
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      const normalizedRoomName = room.tenPhong
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      const matchesSearch = normalizedRoomName.includes(normalizedSearch);
+
       const matchesLocation =
         !filterLocation ||
         getLocationInfo(room.maViTri).tinhThanh === filterLocation;
+
       return matchesSearch && matchesLocation;
     });
 
@@ -196,11 +222,68 @@ const RoomManagement = () => {
                               <FaEdit /> Update
                             </NavLink>
                             <button
-                              onClick={() => handleDelete(room.id)}
                               className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-xs"
+                              onClick={() => showModal(room.id)} // ✅ truyền id vào modal
                             >
                               <FaTrash /> Delete
                             </button>
+                            <Modal
+                              open={isModalOpen}
+                              onOk={handleOk}
+                              onCancel={handleCancel}
+                              footer={null}
+                              closable={false}
+                              centered
+                              maskClosable
+                              styles={{
+                                mask: {
+                                  backgroundColor: "rgba(0, 0, 0, 0.001)",
+                                  backdropFilter: "blur(6px)",
+                                },
+                                body: {
+                                  borderRadius: "1rem", // bo góc modal
+                                },
+                              }}
+                            >
+                              <div className="text-center p-2">
+                                {/* Icon cảnh báo */}
+                                <div className="mx-auto mb-4 w-16 h-16 flex items-center justify-center bg-red-100 text-red-500 rounded-full">
+                                  <FaTrash className="text-3xl" />
+                                </div>
+
+                                {/* Tiêu đề */}
+                                <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                                  Xác nhận xoá phòng
+                                </h2>
+
+                                {/* Nội dung */}
+                                <p className="text-gray-600 mb-6 text-base">
+                                  Bạn có chắc chắn muốn xoá thông tin phòng này
+                                  không?
+                                </p>
+
+                                {/* Hành động */}
+                                <div className="flex justify-center gap-4">
+                                  <button
+                                    onClick={handleCancel}
+                                    className="px-5 py-2 rounded-lg border border-gray-300 text-gray-600
+          hover:text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200
+          transition-all duration-200 shadow-sm active:scale-95"
+                                  >
+                                    Hủy
+                                  </button>
+
+                                  <button
+                                    onClick={handleOk}
+                                    className="px-5 py-2 rounded-lg bg-red-500 text-white font-semibold
+          hover:bg-red-600 focus:ring-2 focus:ring-red-300
+          transition-all duration-200 shadow-sm active:scale-95"
+                                  >
+                                    Xoá
+                                  </button>
+                                </div>
+                              </div>
+                            </Modal>
                           </div>
                         </td>
                       </tr>

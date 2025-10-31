@@ -5,6 +5,7 @@ import type { RootState, DispatchType } from "../../../redux/store";
 import type { BookingRoomType } from "../../../assets/Models/Room";
 import * as Yup from "yup";
 import { postInfoBookingRoomActionThunk } from "../../../redux/reducers/RoomReducer";
+import { showAlert } from "../../../redux/reducers/AlertReducer";
 
 const RoomBooking = () => {
   const { roomDetail } = useSelector((state: RootState) => state.RoomReducer);
@@ -53,7 +54,13 @@ const RoomBooking = () => {
     }),
     onSubmit: async (values) => {
       if (!userInfoLogin) {
-        alert("Vui lòng đăng nhập để đặt phòng");
+        dispatch(
+          showAlert({
+            type: "warning",
+            message: "Bạn chưa đăng nhập",
+            description: "Vui lòng đăng nhập để đặt phòng.",
+          })
+        );
         navigate(`/login?redirectTo=/detail/${id}`);
         return;
       }
@@ -67,9 +74,21 @@ const RoomBooking = () => {
       try {
         dispatch(postInfoBookingRoomActionThunk(payload));
         navigate("/"); //
-        alert("Đặt phòng thành công!");
+        dispatch(
+          showAlert({
+            type: "success",
+            message: "Đặt phòng thành công",
+            description: "",
+          })
+        );
       } catch (err: any) {
-        alert(err.response?.data?.message || "Đặt phòng thất bại");
+        dispatch(
+          showAlert({
+            type: "error",
+            message: "Đặt phòng thất bại",
+            description: "Vui lòng kiểm tra lại thông tin.",
+          })
+        );
       }
     },
   });

@@ -28,6 +28,7 @@ import LocateManageMent from "./Pages/Admin/ComponentAdmin/LocateManageMent";
 import FormLocateManageMent from "./Pages/Admin/ComponentAdmin/FormLocateManageMent";
 import BookingManageMent from "./Pages/Admin/ComponentAdmin/BookingManageMent";
 import FormBookingManageMent from "./Pages/Admin/ComponentAdmin/FormBookingManageMent";
+import AlertGlobal from "./Component/Common/AlertGlobal";
 
 export const routeLink: any = createBrowserHistory();
 
@@ -79,6 +80,7 @@ export function App() {
                 />
               </Route>
             </Routes>
+            <AlertGlobal />
           </HistoryRouter>
         </HelmetProvider>
       </Provider>

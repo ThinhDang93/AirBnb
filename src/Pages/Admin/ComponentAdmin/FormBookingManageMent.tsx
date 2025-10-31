@@ -12,6 +12,7 @@ import { getAllLocaActionThunk } from "../../../redux/reducers/LocationReducer";
 import { UpdateRoomBooking } from "../../../API/RoomAPI";
 import type { BookingRoomType } from "../../../assets/Models/Room";
 import { getRoomDetailActionThunk } from "../../../redux/reducers/RoomReducer";
+import { showAlert } from "../../../redux/reducers/AlertReducer";
 
 const FormBookingManageMent = () => {
   const params = useParams();
@@ -114,11 +115,20 @@ const FormBookingManageMent = () => {
       try {
         await UpdateRoomBooking(values);
         navigate("/admin/booking");
-        alert("Cập nhật thông tin đặt phòng thành công");
+        dispatch(
+          showAlert({
+            type: "success",
+            message: "Cập nhật thông tin đặt phòng",
+            description: "Thành công",
+          })
+        );
       } catch (error: any) {
-        alert(
-          error.response?.data?.message ||
-            "Cập nhật thông tin đặt phòng thất bại"
+        dispatch(
+          showAlert({
+            type: "error",
+            message: "Cập nhật thông tin đặt phòng",
+            description: "Thất bại",
+          })
         );
       }
     },

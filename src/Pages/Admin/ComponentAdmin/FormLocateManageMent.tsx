@@ -4,11 +4,15 @@ import type { LocationType } from "../../../assets/Models/Location";
 import { httpClient } from "../../../Utils/interceptor";
 import { useEffect } from "react";
 import { AddLocaById, UpdateLocaById } from "../../../API/LocationAPI";
+import type { DispatchType } from "../../../redux/store";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../../redux/reducers/AlertReducer";
 
 const FormLocateManageMent = () => {
   const params = useParams();
   const { id } = params;
   const navigate = useNavigate();
+  const dispatch: DispatchType = useDispatch();
 
   const match = useMatch(`/admin/locateedit/${id}`);
   const isEdit = !!match;
@@ -26,14 +30,32 @@ const FormLocateManageMent = () => {
       try {
         if (isEdit) {
           await UpdateLocaById(values, id as any);
-          alert("✅ Cập nhật vị trí thành công!");
+          dispatch(
+            showAlert({
+              type: "success",
+              message: "Cập nhật vị trí",
+              description: "Thành công",
+            })
+          );
         } else {
           await AddLocaById(values);
-          alert("✅ Thêm vị trí thành công!");
+          dispatch(
+            showAlert({
+              type: "success",
+              message: "Thêm vị trí mới",
+              description: "Thành công",
+            })
+          );
         }
         navigate("/admin/locate");
       } catch (error) {
-        alert("❌ Có lỗi xảy ra, vui lòng thử lại.");
+        dispatch(
+          showAlert({
+            type: "error",
+            message: "❌ Có lỗi xảy ra",
+            description: "Vui lòng thử lại",
+          })
+        );
       }
     },
   });

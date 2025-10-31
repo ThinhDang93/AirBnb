@@ -10,6 +10,7 @@ import {
   getRoomDetailBookingActionThunk,
 } from "../../../redux/reducers/RoomReducer";
 import { useNavigate, useParams } from "react-router-dom";
+import { showAlert } from "../../../redux/reducers/AlertReducer";
 
 // Hàm format ngày BE -> UI (YYYY-MM-DD)
 const formatDate = (dateString?: string) =>
@@ -79,10 +80,22 @@ const BookingRoomUpdate = () => {
 
       try {
         await UpdateRoomBooking(payload);
-        alert("✅ Update thành công");
+        dispatch(
+          showAlert({
+            type: "success",
+            message: "Cập nhật thông tin đặt phòng",
+            description: "Thành công",
+          })
+        );
         navigate(`/user/${roomBookingUpdate?.maNguoiDung}`);
       } catch (err: any) {
-        alert(err.response?.data?.message || "❌ Cập nhật đặt phòng thất bại");
+        dispatch(
+          showAlert({
+            type: "error",
+            message: "Cập nhật thông tin đặt phòng",
+            description: "Thất bại",
+          })
+        );
       }
     },
   });

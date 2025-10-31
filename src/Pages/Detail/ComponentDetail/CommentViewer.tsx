@@ -9,6 +9,7 @@ import type { CommentTypeByUser } from "../../../assets/Models/Comment";
 import * as Yup from "yup";
 import { postCommentByUser } from "../../../API/CommentAPI";
 import { getRandomAvatar } from "../../../Utils/interceptor";
+import { showAlert } from "../../../redux/reducers/AlertReducer";
 
 const CommentViewer = () => {
   const { id } = useParams();
@@ -45,11 +46,17 @@ const CommentViewer = () => {
     validationSchema: Yup.object({
       noiDung: Yup.string()
         .required("Vui lòng nhập nội dung bình luận")
-        .min(5, "Nội dung quá ngắn"),
+        .min(2, "Nội dung quá ngắn"),
     }),
     onSubmit: async (values, { resetForm }) => {
       if (!userInfoLogin) {
-        alert("Vui lòng đăng nhập để viết bình luận");
+        dispatch(
+          showAlert({
+            type: "warning",
+            message: "Bạn chưa đăng nhập",
+            description: "Vui lòng đăng nhập để bình luận",
+          })
+        );
         navigate(`/login?redirectTo=/detail/${id}`);
         return;
       }
@@ -61,14 +68,9 @@ const CommentViewer = () => {
         maNguoiBinhLuan: userInfoLogin?.id ?? 0,
       };
 
-      try {
-        await postCommentByUser(payload);
-        alert("Gửi bình luận thành công!");
-        resetForm();
-        if (id) dispatch(getCommentByIdActionThunk(id)); // Cập nhật lại danh sách bình luận
-      } catch (err: any) {
-        alert(err.response?.data?.message || "Gửi bình luận thất bại");
-      }
+      await postCommentByUser(payload);
+      resetForm();
+      if (id) dispatch(getCommentByIdActionThunk(id)); // Cập nhật lại danh sách bình luận
     },
   });
 
@@ -185,7 +187,10 @@ const CommentViewer = () => {
               </div>
 
               {/* Nội dung bình luận */}
-              <p className="text-gray-700 mt-3 leading-relaxed">
+              <p
+                className="text-gray-700 mt-3 leading-relaxed break-words whitespace-pre-line"
+                style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}
+              >
                 {comment.noiDung}
               </p>
             </div>

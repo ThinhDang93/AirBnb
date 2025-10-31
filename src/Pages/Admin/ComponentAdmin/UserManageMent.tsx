@@ -2,15 +2,11 @@ import { useDispatch, useSelector } from "react-redux";
 import type { DispatchType, RootState } from "../../../redux/store";
 import { getArrAllUserActionThunk } from "../../../redux/reducers/UserReducer";
 import { useEffect, useState, useMemo } from "react";
-import {
-  FaEdit,
-  FaTrash,
-  FaSortUp,
-  FaSortDown,
-} from "react-icons/fa";
+import { FaEdit, FaTrash, FaSortUp, FaSortDown } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { deleteUserAPIbyID } from "../../../API/UserAPI";
 import { getRandomAvatar } from "../../../Utils/interceptor";
+import { Modal } from "antd";
 
 const UserManagement = () => {
   const dispatch: DispatchType = useDispatch();
@@ -39,7 +35,6 @@ const UserManagement = () => {
 
   // Filter + Sort + Search (fix immutable bug)
   const filteredUsers = useMemo(() => {
-    // ✅ Copy mảng trước khi thao tác
     let filtered = [...arrAllUser];
 
     // Lọc theo role
@@ -47,14 +42,26 @@ const UserManagement = () => {
       filtered = filtered.filter((u) => u.role === roleFilter);
     }
 
-    // Search theo tên hoặc email
+    // ✅ Tối ưu tìm kiếm theo tên/email
     if (searchTerm.trim()) {
-      const lower = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (u) =>
-          u.name.toLowerCase().includes(lower) ||
-          u.email.toLowerCase().includes(lower)
-      );
+      const normalizeText = (text: string) =>
+        text
+          .trim()
+          .replace(/\s+/g, " ")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase();
+
+      const normalizedSearch = normalizeText(searchTerm);
+
+      filtered = filtered.filter((u) => {
+        const normalizedName = normalizeText(u.name);
+        const normalizedEmail = normalizeText(u.email);
+        return (
+          normalizedName.includes(normalizedSearch) ||
+          normalizedEmail.includes(normalizedSearch)
+        );
+      });
     }
 
     // Sắp xếp ID
@@ -69,17 +76,24 @@ const UserManagement = () => {
   const totalPages = Math.ceil(filteredUsers.length / pageSize);
 
   // Delete user
-  const handleDelete = async (id: number) => {
-    if (!confirm("Bạn có chắc muốn xoá người dùng này không?")) return;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // State lưu ID user được chọn
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
-    try {
-      await deleteUserAPIbyID(id);
-      alert("Đã xoá thành công!");
-      dispatch(getArrAllUserActionThunk());
-    } catch (error) {
-      console.error("Xoá thất bại:", error);
-      alert("Có lỗi xảy ra khi xoá người dùng!");
-    }
+  const showModal = (id: number) => {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = async () => {
+    if (selectedId === null) return;
+    await deleteUserAPIbyID(selectedId);
+    dispatch(getArrAllUserActionThunk());
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   // Select Role
@@ -99,13 +113,13 @@ const UserManagement = () => {
         <div className="relative w-full sm:w-80">
           <input
             type="text"
-            placeholder="      Tìm kiếm theo tên hoặc email..."
+            placeholder="🔍 Tìm kiếm theo tên hoặc email..."
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full border px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+            className="w-80 border px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
           />
         </div>
       </div>
@@ -214,11 +228,67 @@ const UserManagement = () => {
                     <FaEdit /> Update
                   </NavLink>
                   <button
-                    onClick={() => handleDelete(user.id)}
                     className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-xs"
+                    onClick={() => showModal(user.id)} // ✅ truyền id vào modal
                   >
                     <FaTrash /> Delete
                   </button>
+                  <Modal
+                    open={isModalOpen}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    footer={null}
+                    closable={false}
+                    centered
+                    maskClosable
+                    styles={{
+                      mask: {
+                        backgroundColor: "rgba(0, 0, 0, 0.001)",
+                        backdropFilter: "blur(6px)",
+                      },
+                      body: {
+                        borderRadius: "1rem", // bo góc modal
+                      },
+                    }}
+                  >
+                    <div className="text-center p-2">
+                      {/* Icon cảnh báo */}
+                      <div className="mx-auto mb-4 w-16 h-16 flex items-center justify-center bg-red-100 text-red-500 rounded-full">
+                        <FaTrash className="text-3xl" />
+                      </div>
+
+                      {/* Tiêu đề */}
+                      <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                        Xác nhận xoá người dùng
+                      </h2>
+
+                      {/* Nội dung */}
+                      <p className="text-gray-600 mb-6 text-base">
+                        Bạn có chắc chắn muốn xoá người dùng này không?
+                      </p>
+
+                      {/* Hành động */}
+                      <div className="flex justify-center gap-4">
+                        <button
+                          onClick={handleCancel}
+                          className="px-5 py-2 rounded-lg border border-gray-300 text-gray-600
+          hover:text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200
+          transition-all duration-200 shadow-sm active:scale-95"
+                        >
+                          Hủy
+                        </button>
+
+                        <button
+                          onClick={handleOk}
+                          className="px-5 py-2 rounded-lg bg-red-500 text-white font-semibold
+          hover:bg-red-600 focus:ring-2 focus:ring-red-300
+          transition-all duration-200 shadow-sm active:scale-95"
+                        >
+                          Xoá
+                        </button>
+                      </div>
+                    </div>
+                  </Modal>
                 </td>
               </tr>
             ))}

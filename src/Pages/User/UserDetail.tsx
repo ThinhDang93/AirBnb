@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { DispatchType, RootState } from "../../redux/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getUserDetailbyIDActionThunk } from "../../redux/reducers/UserReducer";
 import { NavLink, useParams } from "react-router-dom";
 import {
@@ -11,6 +11,8 @@ import { DeleteRoomBookingbyMaPhong } from "../../API/RoomAPI";
 import type { HomeRoomType } from "../../assets/Models/Room";
 import { formatDate } from "../../Utils/interceptor";
 import { Helmet } from "react-helmet-async";
+import { Modal } from "antd";
+import { FaTrash } from "react-icons/fa";
 
 const UserDetail = () => {
   const params = useParams();
@@ -31,6 +33,26 @@ const UserDetail = () => {
 
   const getAllRoomAPI = () => {
     dispatch(getAllRoom());
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // State lưu ID user được chọn
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  const showModal = (id: number) => {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = async () => {
+    if (selectedId === null) return;
+    await DeleteRoomBookingbyMaPhong(selectedId);
+    getRoomBookingDetail(id);
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   // 1️⃣ Lấy chi tiết user
@@ -161,26 +183,70 @@ const UserDetail = () => {
                               ✏️ <span>Sửa</span>
                             </button>
                           </NavLink>
-                          {/* Nút Xoá */}
+                          {/* Nút Xoá */}{" "}
                           <button
-                            onClick={async () => {
-                              const isConfirmed = confirm(
-                                "Bạn có chắc muốn huỷ đặt phòng này không?"
-                              );
-                              if (!isConfirmed) {
-                                return;
-                              }
-                              {
-                                await DeleteRoomBookingbyMaPhong(b.id);
-                                alert("Đã huỷ thành công!");
-                                await getRoomBookingDetail(id);
-                              }
-                            }}
-                            className="flex items-center gap-2 px-5 py-2 bg-red-100 text-red-700 
-                 rounded-full hover:bg-red-200 transition font-medium border border-red-300 shadow-sm"
+                            className="flex items-center gap-2 px-5 py-2 bg-red-200 text-red-700 
+                 rounded-full hover:bg-red-400 transition font-medium border border-red-300 shadow-sm"
+                            onClick={() => showModal(b.id)} // ✅ truyền id vào modal
                           >
                             ❌ <span>Huỷ</span>
                           </button>
+                          <Modal
+                            open={isModalOpen}
+                            onOk={handleOk}
+                            onCancel={handleCancel}
+                            footer={null}
+                            closable={false}
+                            centered
+                            maskClosable
+                            styles={{
+                              mask: {
+                                backgroundColor: "rgba(0, 0, 0, 0.001)",
+                                backdropFilter: "blur(6px)",
+                              },
+                              body: {
+                                borderRadius: "1rem", // bo góc modal
+                              },
+                            }}
+                          >
+                            <div className="text-center p-2">
+                              {/* Icon cảnh báo */}
+                              <div className="mx-auto mb-4 w-16 h-16 flex items-center justify-center bg-red-100 text-red-500 rounded-full">
+                                <FaTrash className="text-3xl" />
+                              </div>
+
+                              {/* Tiêu đề */}
+                              <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                                Xác nhận huỷ đặt phòng
+                              </h2>
+
+                              {/* Nội dung */}
+                              <p className="text-gray-600 mb-6 text-base">
+                                Bạn có chắc chắn muốn huỷ phòng đặt này không?
+                              </p>
+
+                              {/* Hành động */}
+                              <div className="flex justify-center gap-4">
+                                <button
+                                  onClick={handleCancel}
+                                  className="px-5 py-2 rounded-lg border border-gray-300 text-gray-600
+          hover:text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200
+          transition-all duration-200 shadow-sm active:scale-95"
+                                >
+                                  Hủy
+                                </button>
+
+                                <button
+                                  onClick={handleOk}
+                                  className="px-5 py-2 rounded-lg bg-red-500 text-white font-semibold
+          hover:bg-red-600 focus:ring-2 focus:ring-red-300
+          transition-all duration-200 shadow-sm active:scale-95"
+                                >
+                                  Xoá
+                                </button>
+                              </div>
+                            </div>
+                          </Modal>
                         </div>
                       </td>
                     </tr>

@@ -9,6 +9,7 @@ import { DeleteRoomBookingbyMaPhong } from "../../../API/RoomAPI";
 import { NavLink } from "react-router-dom";
 import { formatDate } from "../../../Utils/interceptor";
 import { Helmet } from "react-helmet-async";
+import { Modal } from "antd";
 
 const BookingManageMent = () => {
   const dispatch: DispatchType = useDispatch();
@@ -24,12 +25,24 @@ const BookingManageMent = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const itemsPerPage = 10;
 
-  const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Bạn có chắc muốn xoá phòng đặt này không?");
-    if (!isConfirmed) return;
-    await DeleteRoomBookingbyMaPhong(id);
-    alert("Đã xoá thành công!");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // State lưu ID user được chọn
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  const showModal = (id: number) => {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = async () => {
+    if (selectedId === null) return;
+    await DeleteRoomBookingbyMaPhong(selectedId);
     dispatch(getArrAllBookingRoomActionThunk());
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -54,13 +67,35 @@ const BookingManageMent = () => {
   }, [arrAllBookingRoom, arrAllroom, arrAllUser]);
 
   // Lọc dữ liệu theo search
+  // Lọc dữ liệu theo search (bỏ dấu tiếng Việt, không phân biệt hoa thường)
   const filteredData = useMemo(() => {
-    const lower = search.toLowerCase();
-    return mergedData.filter(
-      (item) =>
-        item.tenPhong.toLowerCase().includes(lower) ||
-        item.name.toLowerCase().includes(lower)
-    );
+    const normalizedSearch = search
+      .trim()
+      .replace(/\s+/g, " ")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+    if (!normalizedSearch) return mergedData;
+
+    return mergedData.filter((item) => {
+      const normalizedRoomName = item.tenPhong
+        ?.trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      const normalizedUserName = item.name
+        ?.trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      return (
+        normalizedRoomName.includes(normalizedSearch) ||
+        normalizedUserName.includes(normalizedSearch)
+      );
+    });
   }, [mergedData, search]);
 
   // Tính phân trang
@@ -94,8 +129,8 @@ const BookingManageMent = () => {
                 setSearch(e.target.value);
                 setPageIndex(1);
               }}
-              placeholder="Tìm theo tên phòng hoặc người dùng..."
-              className="w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-200 focus:border-indigo-400"
+              placeholder="🔍 Tìm theo tên phòng hoặc người dùng..."
+              className="w-80 px-4 py-2 border  text-sm rounded-lg  focus:ring-indigo-400 outline-none"
             />
           </div>
 
@@ -143,12 +178,67 @@ const BookingManageMent = () => {
                         </NavLink>
                         <button
                           className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-xs"
-                          onClick={() => {
-                            handleDelete(b.id);
-                          }}
+                          onClick={() => showModal(b.id)} // ✅ truyền id vào modal
                         >
                           <FaTrash /> Delete
                         </button>
+                        <Modal
+                          open={isModalOpen}
+                          onOk={handleOk}
+                          onCancel={handleCancel}
+                          footer={null}
+                          closable={false}
+                          centered
+                          maskClosable
+                          styles={{
+                            mask: {
+                              backgroundColor: "rgba(0, 0, 0, 0.001)",
+                              backdropFilter: "blur(6px)",
+                            },
+                            body: {
+                              borderRadius: "1rem", // bo góc modal
+                            },
+                          }}
+                        >
+                          <div className="text-center p-2">
+                            {/* Icon cảnh báo */}
+                            <div className="mx-auto mb-4 w-16 h-16 flex items-center justify-center bg-red-100 text-red-500 rounded-full">
+                              <FaTrash className="text-3xl" />
+                            </div>
+
+                            {/* Tiêu đề */}
+                            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                              Xác nhận xoá thông tin đặt phòng
+                            </h2>
+
+                            {/* Nội dung */}
+                            <p className="text-gray-600 mb-6 text-base">
+                              Bạn có chắc chắn muốn xoá thông tin đặt phòng này
+                              không?
+                            </p>
+
+                            {/* Hành động */}
+                            <div className="flex justify-center gap-4">
+                              <button
+                                onClick={handleCancel}
+                                className="px-5 py-2 rounded-lg border border-gray-300 text-gray-600
+          hover:text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200
+          transition-all duration-200 shadow-sm active:scale-95"
+                              >
+                                Hủy
+                              </button>
+
+                              <button
+                                onClick={handleOk}
+                                className="px-5 py-2 rounded-lg bg-red-500 text-white font-semibold
+          hover:bg-red-600 focus:ring-2 focus:ring-red-300
+          transition-all duration-200 shadow-sm active:scale-95"
+                              >
+                                Xoá
+                              </button>
+                            </div>
+                          </div>
+                        </Modal>
                       </div>
                     </td>
                   </tr>
