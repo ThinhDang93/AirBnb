@@ -10,6 +10,7 @@ import {
 } from "../../redux/reducers/UserReducer";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import { showAlert } from "../../redux/reducers/AlertReducer";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -44,8 +45,13 @@ const Login = () => {
         removeUserLogin();
         await dispatch(getUserInfoLoginActionThunk(values)); // ✅ thêm await
       } catch (err: any) {
-        alert("Đăng nhập thất bại");
-        console.error(err);
+        dispatch(
+          showAlert({
+            type: "error",
+            message: "Đăng nhập thất bại",
+            description: "Vui lòng kiểm tra lại email hoặc mật khẩu.",
+          })
+        );
       }
     },
   });

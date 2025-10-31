@@ -5,6 +5,9 @@ import { useEffect } from "react";
 import { httpClient } from "../../../Utils/interceptor";
 import { PostNewUserAPI, UpdateUserAPI } from "../../../API/UserAPI";
 import * as Yup from "yup";
+import type { DispatchType } from "../../../redux/store";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../../redux/reducers/AlertReducer";
 
 const UserDetailManageMent = () => {
   const params = useParams();
@@ -12,6 +15,7 @@ const UserDetailManageMent = () => {
   const { id } = params;
   const match = useMatch(`/admin/user/${id}`);
   const isEdit = !!match;
+  const dispatch: DispatchType = useDispatch();
 
   const frmEditUser = useFormik<UserInfo>({
     enableReinitialize: true,
@@ -50,15 +54,32 @@ const UserDetailManageMent = () => {
       try {
         if (isEdit) {
           await UpdateUserAPI(payload, id);
-          alert("Cập nhật thông tin thành công");
+          dispatch(
+            showAlert({
+              type: "success",
+              message: "Cập nhật thông tin người dùng",
+              description: "Thông tin đã được cập nhật",
+            })
+          );
         } else {
           await PostNewUserAPI(payload);
-          alert("Thêm mới người dùng thành công");
+          dispatch(
+            showAlert({
+              type: "success",
+              message: "Thêm mới người dùng",
+              description: "Người dùng mới được thêm vào",
+            })
+          );
         }
         navigate("/admin");
       } catch (err: any) {
-        console.error(err);
-        alert(err?.response?.data?.message || "Có lỗi xảy ra");
+        dispatch(
+          showAlert({
+            type: "error",
+            message: "Có lỗi xảy ra",
+            description: "Vui lòng thử lại",
+          })
+        );
       }
     },
   });

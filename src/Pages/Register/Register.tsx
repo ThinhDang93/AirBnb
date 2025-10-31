@@ -4,9 +4,13 @@ import { NavLink, useNavigate } from "react-router-dom";
 import type { UserInfo } from "../../assets/Models/User";
 import { postDataRegisterAPI } from "../../API/UserAPI";
 import { Helmet } from "react-helmet-async";
+import type { DispatchType } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../redux/reducers/AlertReducer";
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch: DispatchType = useDispatch();
 
   const frmRegister = useFormik<UserInfo>({
     initialValues: {
@@ -36,10 +40,22 @@ const Register = () => {
     onSubmit: async (values) => {
       try {
         await postDataRegisterAPI(values);
-        alert("Đăng ký thành công!");
+        dispatch(
+          showAlert({
+            type: "success",
+            message: "Đăng ký thành công",
+            description: "",
+          })
+        );
         navigate("/login");
       } catch (err: any) {
-        alert(err.response?.data?.message || "Đăng ký thất bại");
+        dispatch(
+          showAlert({
+            type: "error",
+            message: "Đăng ký thất bại",
+            description: "Vui lòng kiểm tra lại thông tin.",
+          })
+        );
       }
     },
   });

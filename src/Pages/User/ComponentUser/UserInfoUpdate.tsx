@@ -7,6 +7,7 @@ import { UpdateUserAPI } from "../../../API/UserAPI";
 import { UpdateAvatarActionThunk } from "../../../redux/reducers/UserReducer";
 import { useDispatch, useSelector } from "react-redux";
 import type { DispatchType, RootState } from "../../../redux/store";
+import { showAlert } from "../../../redux/reducers/AlertReducer";
 
 const UserInfoUpdate = () => {
   const navigate = useNavigate();
@@ -52,7 +53,13 @@ const UserInfoUpdate = () => {
     onSubmit: async (values) => {
       if (!id) return;
       await UpdateUserAPI(values, id);
-      alert("Cập nhật thông tin thành công");
+      dispatch(
+        showAlert({
+          type: "success",
+          message: "Cập nhật thông tin người dùng",
+          description: "Thành công",
+        })
+      );
       navigate(`/user/${id}`);
     },
   });

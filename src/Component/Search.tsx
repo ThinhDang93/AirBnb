@@ -21,57 +21,71 @@ const Search = () => {
     dispatch(getAllLocaActionThunk());
   }, [dispatch]);
 
-  // ✅ Hàm search
+  // ✅ Chuẩn hoá từ khoá tìm kiếm (bỏ dấu, trim, lowercase)
+  const normalizeText = (text: string) =>
+    text
+      ?.trim()
+      .replace(/\s+/g, " ")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+  // ✅ Xử lý tìm kiếm
   const handleSearch = async () => {
-    const trimmed = keyword.trim().toLowerCase();
-    // Nếu rỗng → getAllRoom
+    const normalizedSearch = normalizeText(keyword);
 
-    if (!trimmed) {
+    if (!normalizedSearch) {
+      // Nếu input trống → lấy toàn bộ
       dispatch(getAllRoom());
-    }
-    if (keyword !== "") {
-      dispatch(setTrue());
-    }
-
-    if (arrAllLocation.length === 0) {
       dispatch(setArrFilterLoca(arrAllLocation));
+      return;
     }
 
-    // Lọc trực tiếp từ arrAllLocation
-    const filtered = arrAllLocation.filter((loc) =>
-      loc.tinhThanh.toLowerCase().includes(trimmed)
-    );
+    dispatch(setTrue());
 
-    if (filtered.length > 0) {
-      dispatch(setArrFilterLoca(filtered));
-    } else {
-      // Không có kết quả → set rỗng nhưng kèm cờ báo "not found"
-      dispatch(setArrFilterLoca([]));
-    }
-    // console.log(trimmed, arrAllLocation, filtered);
+    // Lọc dữ liệu với normalize
+    const filtered = arrAllLocation.filter((loc) => {
+      const normalizedTinh = normalizeText(loc.tinhThanh);
+      return normalizedTinh.includes(normalizedSearch);
+    });
+
+    dispatch(setArrFilterLoca(filtered));
   };
 
+  // ✅ Nếu user xoá hết text → tự reset danh sách
+  useEffect(() => {
+    if (keyword.trim() === "") {
+      dispatch(setArrFilterLoca(arrAllLocation));
+    }
+  }, [keyword, arrAllLocation, dispatch]);
+
   return (
-    <div className="w-full max-w-xl mx-auto p-2 ">
-      <div className="flex items-center bg-white border border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all duration-200 ">
+    <div className="w-full max-w-xl mx-auto p-2">
+      <div className="flex items-center bg-white border border-gray-300 rounded-full shadow-md hover:shadow-lg transition-all duration-200">
         {/* Input */}
         <input
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSearch();
-            }
-          }}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Bạn muốn đi đâu?"
-          className="flex-1 rounded-full px-5 py-3  placeholder-gray-700 hover:bg-gray-200 border-none outline-none focus:outline-none focus:ring-0"
+          className="flex-1 rounded-full px-5 py-3 placeholder-gray-700 hover:bg-gray-200 border-none outline-none focus:outline-none focus:ring-0"
         />
+
+        {/* Clear button */}
+        {keyword && (
+          <button
+            onClick={() => setKeyword("")}
+            className="text-gray-500 hover:text-gray-700 text-lg mr-1"
+          >
+            ✕
+          </button>
+        )}
 
         {/* Divider */}
         <div className="h-6 w-px bg-gray-300 mx-2" />
 
-        {/* Button */}
+        {/* Search button */}
         <button
           onClick={handleSearch}
           className="flex items-center justify-center w-10 h-10 bg-pink-600 hover:bg-pink-700 rounded-full text-white transition-colors mr-2"

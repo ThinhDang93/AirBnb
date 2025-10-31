@@ -4,10 +4,14 @@ import type { RoomDetailType } from "../../../assets/Models/Room";
 import { AddRoomAPIbyID, UpdateRoomAPIbyID } from "../../../API/RoomAPI";
 import { httpClient } from "../../../Utils/interceptor";
 import { useEffect } from "react";
+import { showAlert } from "../../../redux/reducers/AlertReducer";
+import type { DispatchType } from "../../../redux/store";
+import { useDispatch } from "react-redux";
 
 const FormRoomManageMent = () => {
   const navigate = useNavigate();
   const params = useParams();
+  const dispatch: DispatchType = useDispatch();
 
   const { id } = params;
 
@@ -39,14 +43,41 @@ const FormRoomManageMent = () => {
       hinhAnh: "",
     },
     onSubmit: async (values) => {
-      if (isEdit) {
-        await UpdateRoomAPIbyID(id, values);
-        alert("Update room thành công");
-      } else {
-        await AddRoomAPIbyID(values);
-        alert("Add room thành công");
+      try {
+        if (isEdit) {
+          await UpdateRoomAPIbyID(id, values);
+          dispatch(
+            showAlert({
+              type: "success",
+              message: "Cập nhật thông tin phòng",
+              description: "Thành công",
+            })
+          );
+        } else {
+          await AddRoomAPIbyID(values);
+          dispatch(
+            showAlert({
+              type: "success",
+              message: "Thêm mới phòng",
+              description: "Thành công",
+            })
+          );
+        }
+
+        // ✅ Chuyển hướng sau khi xử lý thành công
+        navigate("/admin/room");
+      } catch (error: any) {
+        console.error("❌ Lỗi khi lưu phòng:", error);
+
+        dispatch(
+          showAlert({
+            type: "error",
+            message: "Thao tác thất bại",
+            description:
+              error?.response?.data?.content || "Có lỗi xảy ra khi lưu phòng.",
+          })
+        );
       }
-      navigate("/admin/room");
     },
   });
 

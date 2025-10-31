@@ -5,6 +5,7 @@ import UserReducer from "./reducers/UserReducer";
 import LocationReducer from "./reducers/LocationReducer";
 import SearchReducer from "./reducers/SearchReducer";
 import BookingReducer from "./reducers/BookingReducer";
+import AlertReducer from "./reducers/AlertReducer";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     LocationReducer,
     SearchReducer,
     BookingReducer,
+    AlertReducer,
   },
 });
 
