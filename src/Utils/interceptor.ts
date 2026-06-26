@@ -9,7 +9,7 @@ import { routeLink } from "../App";
 export const ACCESS_TOKEN: string = "accessToken";
 
 export const TOKEN_CYBERSOFT: string =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCBTw6FuZyAxNiIsIkhldEhhblN0cmluZyI6IjEzLzAxLzIwMjYiLCJIZXRIYW5UaW1lIjoiMTc2ODI2MjQwMDAwMCIsIm5iZiI6MTc0NTM0NDgwMCwiZXhwIjoxNzY4NDEzNjAwfQ.7HwjnwyCQy67B09sLtGp-d7oyhXyP3LUVtXaz60bQeo";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJEZXZPcHMgMDIiLCJIZXRIYW5TdHJpbmciOiIyOC8wOS8yMDI2IiwiSGV0SGFuVGltZSI6IjE3OTA1NTM2MDAwMDAiLCJuYmYiOjE3NjkwMTQ4MDAsImV4cCI6MTc5MDcwMTIwMH0.zSBJtqDLuPvKwr_on1Oi5AZu5DlaEWUjNmyd-Rbmy7Q";
 
 export const DOMAIN: string = "https://airbnbnew.cybersoft.edu.vn";
 
